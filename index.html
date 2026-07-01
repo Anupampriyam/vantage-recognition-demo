@@ -493,31 +493,36 @@ a{color:inherit;text-decoration:none}
 .gfab{position:fixed;bottom:16px;right:16px;z-index:460;background:var(--brand);color:#fff;font-weight:900;font-size:12.5px;border-radius:50px;padding:10px 17px;box-shadow:0 10px 22px -6px rgba(41,41,76,.55);display:flex;align-items:center;gap:7px}
 .gfab:hover{background:var(--brand-600)}
 
-/* ===== profile badging ===== */
-.pf-hero{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,#29294C,#3F3F74);color:#fff;border-radius:18px;padding:24px 26px;box-shadow:var(--shadow-sm)}
-.pf-av{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.16);border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;flex:none}
-.pf-name{font-size:22px;font-weight:900}
-.pf-role{font-size:13.5px;color:#d8d3ea;margin-top:2px}
-.pf-title{display:inline-flex;align-items:center;gap:7px;margin-top:12px;background:#fff;color:var(--accent-600);border:1.5px solid var(--accent);border-radius:50px;padding:7px 16px;font-weight:900;font-size:14px}
-.pf-stats{display:flex;gap:18px;margin-top:14px;flex-wrap:wrap}
-.pf-stats span{font-size:12.5px;color:#cdd0e0}
-.pf-stats b{color:#fff;font-weight:900;font-size:14px}
-.pf-h{font-size:18px;font-weight:900;color:var(--navy);margin:22px 0 14px}
-.pf-h span{display:block;font-size:13px;font-weight:400;color:var(--text-2);margin-top:2px}
-.pf-badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-.pf-badge{background:#fff;border:1px solid #edecf1;border-radius:14px;box-shadow:var(--shadow-sm);padding:18px 14px;text-align:center;transition:transform .14s,box-shadow .14s}
-.pf-badge:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
-.pf-badge.is-title{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow-sm)}
-.pf-badge .pb-medal{width:58px;height:58px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff}
-.pf-badge .pb-name{font-size:14px;font-weight:900;color:var(--navy)}
-.pf-badge .pb-cnt{font-size:11.5px;color:var(--text-2);margin-top:2px}
-.pf-badge .pb-x{display:inline-block;margin-top:8px;font-size:11px;font-weight:900;color:var(--brand-600);background:var(--brand-25);border-radius:50px;padding:2px 9px}
-.pf-badge .pb-x.title{color:#fff;background:var(--accent)}
+/* points pill is now a button */
+.points-pill{cursor:pointer;transition:background .13s,transform .13s}
+.points-pill:hover{background:#e6e2f2;transform:translateY(-1px)}
+
+/* ===== feed with left profile rail ===== */
+.feedwrap{display:grid;grid-template-columns:236px 1fr;gap:18px;align-items:start;max-width:900px;margin:0 auto}
+.feedwrap .feed{max-width:none;margin:0}
+.feed-rail{display:flex;flex-direction:column;gap:16px;position:sticky;top:0}
+.pfcard{background:#fff;border:1px solid #edecf1;border-radius:16px;box-shadow:var(--shadow-sm);padding:20px 16px;text-align:center}
+.pfc-av{width:72px;height:72px;border-radius:50%;margin:0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:25px;background:linear-gradient(135deg,#3F3F74,#29294C);box-shadow:0 0 0 4px #EEEEF6}
+.pfc-name{font-size:16px;font-weight:900;color:var(--navy);margin-top:11px}
+.pfc-role{font-size:12px;color:var(--text-2);margin-top:2px}
+.pfc-title{display:inline-flex;align-items:center;gap:6px;margin-top:13px;background:var(--accent-25);color:var(--accent-600);border:1.5px solid var(--accent);border-radius:50px;padding:7px 15px;font-weight:900;font-size:13.5px;transition:box-shadow .3s,transform .3s}
+.pfc-title.pop{animation:titlepop .6s ease}
+@keyframes titlepop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.pfc-stats{display:flex;justify-content:space-around;margin-top:16px;padding-top:15px;border-top:1px solid #f0eff3}
+.pfc-stats>div{display:flex;flex-direction:column;gap:1px}
+.pfc-stats b{font-size:19px;font-weight:900;color:var(--brand)}
+.pfc-stats span{font-size:11px;color:var(--text-2)}
+.pfc-values{text-align:left;padding:16px}
+.pfv-h{font-size:12.5px;font-weight:900;color:var(--navy);margin-bottom:10px}
+.pfv-row{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--text);padding:5px 0;font-weight:700}
+.pfv-row b{margin-left:auto;color:var(--text-2);font-weight:900}
+.pfv-dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.pfv-dot.d2{background:#3F3F74}.pfv-dot.d3{background:#6A6AAF}
 
 @media(max-width:980px){
   .lay3,.lay2{grid-template-columns:1fr}
-  .pf-hero{flex-direction:column;text-align:center}
-  .pf-stats{justify-content:center}
+  .feedwrap{grid-template-columns:1fr}
+  .feed-rail{position:static}
 }
 @media(max-width:880px){
   .app{grid-template-columns:1fr}
@@ -574,9 +579,6 @@ a{color:inherit;text-decoration:none}
         <button class="nav-item" id="navLeaderboard" onclick="switchView('leaderboard',this)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c6c7c" stroke-width="2"><path d="M8 21h8M12 17v4M6 4h12v5a6 6 0 0 1-12 0V4ZM6 6H3v2a3 3 0 0 0 3 3M18 6h3v2a3 3 0 0 1-3 3"/></svg> Leaderboard
         </button>
-        <button class="nav-item" id="navProfile" onclick="switchView('profile',this)">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c6c7c" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> My Profile
-        </button>
         <div class="sidebar-foot">Demo workspace &middot; Northwind Corp</div>
       </aside>
 
@@ -584,10 +586,10 @@ a{color:inherit;text-decoration:none}
       <main class="main">
         <div class="topbar">
           <h2 id="viewTitle">Social Feed</h2>
-          <div class="points-pill">
+          <button class="points-pill" id="pointsPill" onclick="switchView('rewards', document.getElementById('navRewards'))" title="Redeem your points">
             <span class="coin">&#11088;</span>
             <span><span class="pval" id="ptsVal">4,750</span> <span class="plab">Points</span></span>
-          </div>
+          </button>
           <button class="recognize-btn" onclick="openRecognize()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>
             Recognize
@@ -598,7 +600,24 @@ a{color:inherit;text-decoration:none}
         <div class="scroll">
           <!-- FEED -->
           <div class="view active" id="view-feed">
-            <div class="feed" id="feed"></div>
+            <div class="feedwrap">
+              <aside class="feed-rail">
+                <div class="pfcard" id="pfCard">
+                  <div class="pfc-av">AM</div>
+                  <div class="pfc-name">Alex Morgan</div>
+                  <div class="pfc-role">Strategic Marketing - NA</div>
+                  <div class="pfc-title" id="pfTitle"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M8.5 13 7 22l5-3 5 3-1.5-9"/></svg> <span id="pfTitleText">Workversary Wizard</span></div>
+                  <div class="pfc-stats"><div><b>32</b><span>Awards</span></div><div><b>31</b><span>Badges</span></div><div><b>5</b><span>Greetings</span></div></div>
+                </div>
+                <div class="pfcard pfc-values">
+                  <div class="pfv-h">Recognized most for</div>
+                  <div class="pfv-row"><span class="pfv-dot"></span> Agile <b id="pfvAgile">8&times;</b></div>
+                  <div class="pfv-row"><span class="pfv-dot d2"></span> Innovation <b>5&times;</b></div>
+                  <div class="pfv-row"><span class="pfv-dot d3"></span> Ownership <b>4&times;</b></div>
+                </div>
+              </aside>
+              <div class="feed" id="feed"></div>
+            </div>
           </div>
 
           <!-- REWARDS -->
@@ -734,20 +753,6 @@ a{color:inherit;text-decoration:none}
             </div>
           </div>
 
-          <!-- PROFILE (badging) -->
-          <div class="view" id="view-profile">
-            <div class="pf-hero">
-              <div class="pf-av">AM</div>
-              <div class="pf-id">
-                <div class="pf-name">Alex Morgan</div>
-                <div class="pf-role">Strategic Marketing &middot; North America</div>
-                <div class="pf-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-600)" stroke-width="2"><circle cx="12" cy="9" r="5"/><path d="M8.5 13 7 22l5-3 5 3-1.5-9"/></svg> Workversary Wizard</div>
-                <div class="pf-stats"><span><b>32</b> Awards</span><span><b>31</b> Badges</span><span><b>5</b> Greetings</span></div>
-              </div>
-            </div>
-            <div class="pf-h">Badges &amp; titles earned <span>Titles come from how you show up. Value badges come from what peers recognize.</span></div>
-            <div class="pf-badges" id="pfBadges"></div>
-          </div>
         </div>
       </main>
     </div><!-- /.app -->
@@ -865,9 +870,9 @@ var GRAD_GOLD='linear-gradient(135deg,#505095,#31315A)';   /* deep indigo */
 var GRAD_GREEN='linear-gradient(135deg,#6A6AAF,#505095)';  /* lavender indigo */
 
 var BADGES = [
-  { name:'Innovation', icon:'&#128161;', desc:'Brought a bold new idea to life', grad:GRAD_ORANGE },
-  { name:'Team Player', icon:'&#129309;', desc:'Lifted the whole team up', grad:GRAD_NAVY },
-  { name:'Customer First', icon:'&#11088;', desc:'Went the distance for a customer', grad:GRAD_GREEN },
+  { name:'Agile', icon:'&#9889;', desc:'Adapted fast and kept the team moving', grad:GRAD_ORANGE },
+  { name:'Innovation', icon:'&#128161;', desc:'Brought a bold new idea to life', grad:GRAD_NAVY },
+  { name:'Team Player', icon:'&#129309;', desc:'Lifted the whole team up', grad:GRAD_GREEN },
   { name:'Ownership', icon:'&#128640;', desc:'Took it on and saw it through', grad:GRAD_GOLD }
 ];
 var AWARDS = [
@@ -875,7 +880,7 @@ var AWARDS = [
   { name:'Star Performer', icon:'&#127775;', desc:'Standout month', points:500, grad:GRAD_NAVY },
   { name:'Excellence Award', icon:'&#127942;', desc:'Exceptional, lasting impact', points:1000, grad:GRAD_ORANGE }
 ];
-var VALUES = ['#Innovation','#Teamwork','#CustomerObsession','#Ownership','#Integrity'];
+var VALUES = ['#Agile','#Innovation','#Teamwork','#CustomerObsession','#Ownership'];
 
 function advisorDraft(person, label, tone){
   var first = person.name.split(' ')[0];
@@ -1091,7 +1096,7 @@ function switchView(v,el){
   document.getElementById('view-'+v).classList.add('active');
   document.querySelectorAll('.sidebar .nav-item').forEach(function(x){x.classList.remove('active');});
   if(el){ el.classList.add('active'); }
-  var titles={feed:'Social Feed',rewards:'Rewards',milestones:'Milestones',leaderboard:'Leaderboard',profile:'My Profile'};
+  var titles={feed:'Social Feed',rewards:'Rewards',milestones:'Milestones',leaderboard:'Leaderboard'};
   document.getElementById('viewTitle').textContent = titles[v] || 'Vantage Recognition';
 }
 function switchRw(p,el){
@@ -1293,13 +1298,10 @@ function lbTab(which, label, el){
   el.classList.add('on');
   renderLeaderboard();
 }
-function renderProfile(){
-  var g=document.getElementById('pfBadges'); if(!g) return;
-  g.innerHTML=PF_BADGES.map(function(b){
-    var tag = b.title ? '<span class="pb-x title">Title</span>' : '<span class="pb-x">Earned</span>';
-    return '<div class="pf-badge'+(b.title?' is-title':'')+'"><div class="pb-medal" style="background:'+b.grad+'">'+b.icon+'</div>'+
-      '<div class="pb-name">'+b.name+'</div><div class="pb-cnt">'+b.sub+'</div>'+tag+'</div>';
-  }).join('');
+/* awards the "Top Agile Expert" profile badge on the feed profile card */
+function earnAgileBadge(){
+  var t=document.getElementById('pfTitleText'); if(t) t.textContent='Top Agile Expert';
+  var pill=document.getElementById('pfTitle'); if(pill){ pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop'); }
 }
 
 var toastT;
@@ -1366,16 +1368,16 @@ var GUIDE=[
   { setup:function(){ topScroll(); }, spot:'.feed .card:not(.ghost)', auto:2600, scroll:true,
     eye:'Recognized', h:'It is live in the feed', s:'Public, on-brand, tied to a value. This is how culture becomes visible.' },
 
-  { spot:'#navRewards', click:'#navRewards',
-    eye:'Step 6 of 8 &middot; Reward', h:'Now spend those points', s:'Recognition earns points. Points become rewards people actually want.', do:'Open Rewards' },
+  { spot:'#pointsPill', click:'#pointsPill',
+    eye:'Step 6 of 8 &middot; Reward', h:'Now spend those points', s:'Recognition earns points. Tap your balance to open Rewards.', do:'Tap your points' },
 
-  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, hole:'#gcGrid .gc:first-child', spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:600,
-    eye:'Step 6 of 8 &middot; Reward', h:'Redeem a gift card', s:'A global catalog of top brands. 1 point = $1.', do:'Redeem Amazon $50' },
+  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, hole:'#view-rewards', spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:600,
+    eye:'Step 6 of 8 &middot; Reward', h:'Redeem a gift card', s:'A global catalog of top brands, all in view. 1 point = $1.', do:'Redeem Amazon $50' },
 
-  { spot:'.rw-tab:nth-child(2)', click:'.rw-tab:nth-child(2)',
-    eye:'Step 7 of 8 &middot; Amazon store', h:'Or shop Amazon directly', s:'10M+ products, checkout entirely with Vantage Points.', do:'Open Amazon Store' },
+  { hole:'#view-rewards', spot:'.rw-tab:nth-child(2)', click:'.rw-tab:nth-child(2)',
+    eye:'Step 7 of 8 &middot; Amazon store', h:'Or shop Amazon directly', s:'10M+ products, the whole store, checkout with points.', do:'Open Amazon Store' },
 
-  { setup:function(){ topScroll(); }, hole:'#amzGrid .prod:first-child', spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:700,
+  { setup:function(){ topScroll(); }, hole:'#view-rewards', spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:700,
     eye:'Step 7 of 8 &middot; Amazon store', h:'Buy it with points', s:'The reward lands the same day. No cash, no admin.', do:'Buy with points' },
 
   { spot:'#navMilestones', click:'#navMilestones',
@@ -1391,14 +1393,11 @@ var GUIDE=[
   { setup:function(){ topScroll(); fireConfetti(); }, spot:'.pod.first', auto:3200, scroll:true,
     eye:'Leaderboard', h:'You are #1 this month', s:'Consistent recognition puts your impact right at the top.' },
 
-  { spot:'#navProfile', click:'#navProfile',
-    eye:'Your profile', h:'Every win, on your profile', s:'Titles and value badges build a living record of how you show up.', do:'Open My Profile' },
+  { setup:function(){ switchView('feed',nav(0)); topScroll(); }, hole:'.feed-rail', spot:'.pfc-values', auto:3000, scroll:true,
+    eye:'Profile badging', h:'You keep living the Agile value', s:'Recognition after recognition, Agile is your standout strength.' },
 
-  { setup:function(){ topScroll(); }, spot:'.pf-title', auto:2600, scroll:true,
-    eye:'Profile badging', h:'Workversary Wizard, earned', s:'Achievement titles like this are unlocked by how you engage.' },
-
-  { spot:'.pf-badges', auto:3200, scroll:true,
-    eye:'Profile badging', h:'Badges for the values you live', s:'Every appreciation adds to a visible, behaviour-linked profile.' }
+  { setup:function(){ earnAgileBadge(); fireConfetti(); }, hole:'.feed-rail', spot:'#pfTitle', auto:3600, scroll:true,
+    eye:'New profile badge', h:'Top Agile Expert, unlocked', s:'Earn achievement titles on your profile just by how you show up.' }
 ];
 
 function gEls(){ return {
@@ -1484,7 +1483,7 @@ document.addEventListener('click',function(e){
   }
 },true);
 
-renderFeed(); renderGiftcards(); renderAmazon(); renderMerch(); renderExperiences(); renderMilestones(); renderLeaderboard(); renderProfile(); setPoints(state.points);
+renderFeed(); renderGiftcards(); renderAmazon(); renderMerch(); renderExperiences(); renderMilestones(); renderLeaderboard(); setPoints(state.points);
 
 /* ===== scale the iPad to fit whatever space the host page gives us ===== */
 var DEV_W=1234, DEV_H=874, PAD=36;
