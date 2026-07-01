@@ -1456,19 +1456,26 @@ function positionGuide(s){
   // ring hugs the specific element
   var rp=6, x=Math.max(0,rr.left-rp), y=Math.max(0,rr.top-rp), w=rr.width+2*rp, h=rr.height+2*rp;
   setBox(e.ring,x,y,w,h);
-  // hand + tip anchor to the ring element, but sit OUTSIDE the sharp hole so they never cover content
-  var below=(hy+hh+64)<vh;
-  e.hand.style.display='block';
-  var hchar = below ? '☝' : '👇';
-  if(e.hand.getAttribute('data-dir')!==hchar){ e.hand.innerHTML='<span>'+hchar+'</span>'; e.hand.setAttribute('data-dir',hchar); }
-  e.hand.style.left=Math.min(x+w-12, vw-40)+'px';
-  e.hand.style.top=(below?(hy+hh+2):(hy-42))+'px';
-  var tw=290, th=150;
-  var tx=Math.min(Math.max(12,x), vw-tw-12);
-  var ty = below ? (hy+hh+50) : (hy-th-14);
-  if(ty<12) ty=hy+hh+50;
-  if(ty+th>vh-12) ty=vh-th-12;
+  // tooltip: place on whichever side of the SECTION has room (below > above > right > left),
+  // so it never overlaps the highlighted button or the sharp content.
+  var tw=290, th=e.tip.offsetHeight||160, m=18, gap=8, tx, ty, side;
+  var clampX=function(v){ return Math.min(Math.max(12,v), vw-tw-12); };
+  var clampY=function(v){ return Math.min(Math.max(12,v), vh-th-12); };
+  if(hy+hh+m+th <= vh-gap){ side='below'; ty=hy+hh+m; tx=clampX(rr.left-10); }
+  else if(hy-m-th >= gap){ side='above'; ty=hy-m-th; tx=clampX(rr.left-10); }
+  else if(hx+hw+m+tw <= vw-gap){ side='right'; tx=hx+hw+m; ty=clampY(rr.top+rr.height/2-th/2); }
+  else if(hx-m-tw >= gap){ side='left'; tx=hx-m-tw; ty=clampY(rr.top+rr.height/2-th/2); }
+  else { side='below'; ty=clampY(hy+hh+m); tx=clampX(rr.left-10); }
   e.tip.style.left=tx+'px'; e.tip.style.top=ty+'px';
+  // hand hugs the ringed element, pointing from the tooltip toward it
+  e.hand.style.display='block';
+  var hchar, hlx, hly;
+  if(side==='below'){ hchar='☝'; hlx=Math.min(x+w-10, vw-40); hly=y+h+2; }
+  else if(side==='above'){ hchar='👇'; hlx=Math.min(x+w-10, vw-40); hly=y-40; }
+  else if(side==='right'){ hchar='👈'; hlx=x+w+4; hly=y+h/2-18; }
+  else { hchar='👉'; hlx=x-40; hly=y+h/2-18; }
+  if(e.hand.getAttribute('data-dir')!==hchar){ e.hand.innerHTML='<span>'+hchar+'</span>'; e.hand.setAttribute('data-dir',hchar); }
+  e.hand.style.left=hlx+'px'; e.hand.style.top=hly+'px';
 }
 function guideTick(){ if(!guide.on) return; var s=GUIDE[guide.i]; if(s) positionGuide(s); requestAnimationFrame(guideTick); }
 function updateGProg(){ document.getElementById('gProg').style.width = Math.round(guide.i/GUIDE.length*100)+'%'; }
