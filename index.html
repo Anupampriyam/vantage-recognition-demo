@@ -459,26 +459,53 @@ a{color:inherit;text-decoration:none}
 .gk-banner{height:118px;margin:2px 16px 12px;border-radius:12px}
 .gk-pill{height:22px;width:78px;border-radius:50px;margin:4px}
 
-/* ===== guided tour ===== */
-#tour{position:fixed;inset:0;z-index:500;display:none;font-family:'Lato',sans-serif;pointer-events:none}
-#tour.on{display:block}
-.tdim{position:fixed;background:rgba(16,18,36,.66);pointer-events:auto}
-.tring{position:fixed;border:2.5px solid var(--accent);border-radius:12px;box-shadow:0 0 0 5px rgba(255,109,5,.22);pointer-events:none}
-.thand{position:absolute;font-size:38px;pointer-events:none;transition:all .3s cubic-bezier(.4,0,.2,1);filter:drop-shadow(0 4px 5px rgba(0,0,0,.35));animation:hbob 1s ease-in-out infinite}
-@keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
-.ttip{position:fixed;max-width:272px;background:#fff;border-radius:14px;box-shadow:0 18px 44px -10px rgba(13,18,38,.55);padding:15px 17px;pointer-events:auto}
-.ttip .st{font-size:11px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--accent-600)}
-.ttip .tx{font-size:14.5px;color:var(--navy);font-weight:700;line-height:1.4;margin-top:5px}
-.ttip .rw{display:flex;align-items:center;gap:12px;margin-top:13px}
-.ttip .nx{background:var(--brand);color:#fff;font-weight:900;font-size:13px;border-radius:50px;padding:8px 18px}
-.ttip .nx:hover{background:var(--brand-600)}
-.ttip .sk{font-size:12px;color:var(--text-2);font-weight:700;margin-left:auto}
-.ttip .sk:hover{color:var(--navy)}
+/* ===== cinematic story layer ===== */
+#story{position:fixed;inset:0;z-index:500;display:none;font-family:'Lato',sans-serif;pointer-events:none}
+#story.on{display:block}
+#storyProg{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--accent),#ffb07a);z-index:2;transition:width .25s linear}
+#storyCap{position:fixed;left:50%;bottom:38px;transform:translateX(-50%) translateY(14px);width:min(680px,86vw);background:rgba(20,22,42,.9);color:#fff;border-radius:16px;padding:18px 24px;text-align:center;box-shadow:0 20px 50px -12px rgba(8,10,26,.6);backdrop-filter:blur(6px);opacity:0;transition:opacity .5s ease,transform .5s ease}
+#storyCap.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#storyCap .cap-eye{font-size:11.5px;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#ffb07a;margin-bottom:6px}
+#storyCap .cap-h{font-size:22px;font-weight:900;line-height:1.2}
+#storyCap .cap-s{font-size:14px;color:#cdd0e0;font-weight:400;margin-top:6px}
+#storySkip{position:fixed;top:14px;right:16px;z-index:3;background:rgba(20,22,42,.72);color:#fff;font-weight:700;font-size:12.5px;border-radius:50px;padding:7px 15px;pointer-events:auto;backdrop-filter:blur(4px)}
+#storySkip:hover{background:rgba(20,22,42,.92)}
+#storyEnd{position:fixed;inset:0;z-index:2;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(120% 120% at 50% 30%,rgba(41,41,76,.94),rgba(16,18,36,.97));color:#fff;pointer-events:auto;padding:24px}
+#storyEnd.show{display:flex;animation:fade .4s ease}
+#storyEnd .se-h{font-size:clamp(24px,4vw,38px);font-weight:900}
+#storyEnd .se-s{font-size:16px;color:#cdd0e0;margin-top:10px;max-width:460px}
+#storyEnd .se-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+#storyEnd .se-replay{background:rgba(255,255,255,.14);color:#fff;font-weight:900;font-size:14px;border-radius:50px;padding:12px 24px;border:1px solid rgba(255,255,255,.28)}
+#storyEnd .se-replay:hover{background:rgba(255,255,255,.24)}
+#storyEnd .se-explore{background:var(--accent);color:#fff;font-weight:900;font-size:14px;border-radius:50px;padding:12px 26px}
+#storyEnd .se-explore:hover{background:var(--accent-600)}
+/* transient spotlight glow used by the story to draw the eye (no click needed) */
+.story-glow{box-shadow:0 0 0 3px var(--accent),0 0 0 8px rgba(255,109,5,.28) !important;border-radius:12px;transition:box-shadow .3s}
 .gfab{position:fixed;bottom:16px;right:16px;z-index:460;background:var(--brand);color:#fff;font-weight:900;font-size:12.5px;border-radius:50px;padding:10px 17px;box-shadow:0 10px 22px -6px rgba(41,41,76,.55);display:flex;align-items:center;gap:7px}
 .gfab:hover{background:var(--brand-600)}
 
+/* ===== profile badging ===== */
+.pf-hero{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,#29294C,#3F3F74);color:#fff;border-radius:18px;padding:24px 26px;box-shadow:var(--shadow-sm)}
+.pf-av{width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.16);border:3px solid rgba(255,255,255,.5);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;flex:none}
+.pf-name{font-size:22px;font-weight:900}
+.pf-role{font-size:13.5px;color:#d8d3ea;margin-top:2px}
+.pf-stats{display:flex;gap:18px;margin-top:12px;flex-wrap:wrap}
+.pf-stats span{font-size:12.5px;color:#cdd0e0}
+.pf-stats b{color:#fff;font-weight:900;font-size:14px}
+.pf-h{font-size:18px;font-weight:900;color:var(--navy);margin:22px 0 14px}
+.pf-h span{display:block;font-size:13px;font-weight:400;color:var(--text-2);margin-top:2px}
+.pf-badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.pf-badge{background:#fff;border:1px solid #edecf1;border-radius:14px;box-shadow:var(--shadow-sm);padding:18px 14px;text-align:center;transition:transform .14s,box-shadow .14s}
+.pf-badge:hover{transform:translateY(-3px);box-shadow:var(--shadow-md)}
+.pf-badge .pb-medal{width:58px;height:58px;border-radius:50%;margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:28px;color:#fff}
+.pf-badge .pb-name{font-size:14px;font-weight:900;color:var(--navy)}
+.pf-badge .pb-cnt{font-size:11.5px;color:var(--text-2);margin-top:2px}
+.pf-badge .pb-x{display:inline-block;margin-top:8px;font-size:11px;font-weight:900;color:var(--brand-600);background:var(--brand-25);border-radius:50px;padding:2px 9px}
+
 @media(max-width:980px){
   .lay3,.lay2{grid-template-columns:1fr}
+  .pf-hero{flex-direction:column;text-align:center}
+  .pf-stats{justify-content:center}
 }
 @media(max-width:880px){
   .app{grid-template-columns:1fr}
@@ -532,8 +559,11 @@ a{color:inherit;text-decoration:none}
         <button class="nav-item" onclick="switchView('milestones',this)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c6c7c" stroke-width="2"><path d="M12 15a7 7 0 1 0 0-14 7 7 0 0 0 0 14ZM8.5 13.5 7 22l5-3 5 3-1.5-8.5"/></svg> Milestones
         </button>
-        <button class="nav-item" onclick="switchView('leaderboard',this)">
+        <button class="nav-item" id="navLeaderboard" onclick="switchView('leaderboard',this)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c6c7c" stroke-width="2"><path d="M8 21h8M12 17v4M6 4h12v5a6 6 0 0 1-12 0V4ZM6 6H3v2a3 3 0 0 0 3 3M18 6h3v2a3 3 0 0 1-3 3"/></svg> Leaderboard
+        </button>
+        <button class="nav-item" id="navProfile" onclick="switchView('profile',this)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5c6c7c" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg> My Profile
         </button>
         <div class="sidebar-foot">Demo workspace &middot; Northwind Corp</div>
       </aside>
@@ -691,6 +721,20 @@ a{color:inherit;text-decoration:none}
               </div>
             </div>
           </div>
+
+          <!-- PROFILE (badging) -->
+          <div class="view" id="view-profile">
+            <div class="pf-hero">
+              <div class="pf-av">AM</div>
+              <div class="pf-id">
+                <div class="pf-name">Alex Morgan</div>
+                <div class="pf-role">Strategic Marketing &middot; North America</div>
+                <div class="pf-stats"><span><b>32</b> Awards</span><span><b>31</b> Badges</span><span><b>3 yrs</b> Tenure</span></div>
+              </div>
+            </div>
+            <div class="pf-h">Badges earned <span>Values Alex is recognized for living</span></div>
+            <div class="pf-badges" id="pfBadges"></div>
+          </div>
         </div>
       </main>
     </div><!-- /.app -->
@@ -758,20 +802,27 @@ a{color:inherit;text-decoration:none}
 
 <div class="toast" id="toast"><span class="tdot"></span><span id="toastMsg"></span></div>
 
-<!-- guided tour overlay -->
-<div id="tour">
-  <div class="tdim" id="dT"></div><div class="tdim" id="dB"></div><div class="tdim" id="dL"></div><div class="tdim" id="dR"></div>
-  <div class="tring" id="tRing"></div>
-  <div class="thand" id="tHand">&#128070;</div>
-  <div class="ttip" id="tTip">
-    <div class="st" id="tStep">Step 1</div>
-    <div class="tx" id="tTxt"></div>
-    <div class="rw"><button class="nx" id="tNx" style="display:none" onclick="tourNext()">Got it</button><a class="sk" onclick="endTour()">Skip</a></div>
+<!-- story caption layer -->
+<div id="story">
+  <div id="storyProg"></div>
+  <div id="storyCap">
+    <div class="cap-eye" id="capEye"></div>
+    <div class="cap-h" id="capH"></div>
+    <div class="cap-s" id="capS"></div>
+  </div>
+  <button id="storySkip" onclick="endStory()">Skip &rsaquo;</button>
+  <div id="storyEnd">
+    <div class="se-h">That is Vantage Recognition.</div>
+    <div class="se-s">Recognize great work, reward it, and watch culture grow.</div>
+    <div class="se-row">
+      <button class="se-replay" onclick="startStory()">&#9654; Watch again</button>
+      <button class="se-explore" onclick="endStory()">Explore the demo</button>
+    </div>
   </div>
 </div>
-<button class="gfab" id="gfab" onclick="startTour()" style="display:none">
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.8.4-1 .8-1 1.7M12 16.5h.01"/></svg>
-  Show me how
+<button class="gfab" id="gfab" onclick="startStory()" style="display:none">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+  Play the story
 </button>
 
 <script>
@@ -881,9 +932,9 @@ var EXPERIENCES = [
 /* Milestones (work anniversaries pulled from HRIS) */
 /* Milestone feed posts (peers' work anniversaries) */
 var MS_FEED = [
+  { name:'Alex Morgan', c:'#29294C', years:3, time:'Today', you:true },
   { name:'David Okafor', c:'#e0529c', years:3, time:'10 hrs ago' },
-  { name:'Priya Nair', c:'#12B76A', years:5, time:'Yesterday' },
-  { name:'Sarah Bennett', c:'#29294C', years:2, time:'2 days ago' }
+  { name:'Priya Nair', c:'#12B76A', years:5, time:'Yesterday' }
 ];
 /* Upcoming milestones (left rail) */
 var MS_UPCOMING = [
@@ -909,8 +960,27 @@ var LB = {
     { name:'Sarah Bennett', dept:'Lead Product Designer', c:'#29294C', n:2400 },
     { name:'James Whitfield', dept:'Enterprise Account Executive', c:'#F79009', n:2050 },
     { name:'Tom Becker', dept:'Regional Sales Manager', c:'#6A6AAF', n:1780 }
+  ],
+  // story beat: the viewer (Alex) rises to #1 this month
+  story:[
+    { name:'Alex Morgan', dept:'Strategic Marketing (You)', c:'#29294C', n:42, you:true },
+    { name:'Maria Chen', dept:'VP, Product', c:'#3f7fd6', n:38 },
+    { name:'David Okafor', dept:'Principal Engineer', c:'#e0529c', n:34 },
+    { name:'Sarah Bennett', dept:'Lead Product Designer', c:'#29294C', n:31 },
+    { name:'James Whitfield', dept:'Enterprise Account Executive', c:'#F79009', n:26 },
+    { name:'Priya Nair', dept:'Director, Customer Success', c:'#12B76A', n:22 }
   ]
 };
+
+/* Profile badging: values Alex is recognized for */
+var PF_BADGES = [
+  { name:'Innovation', icon:'&#128161;', count:9, grad:'linear-gradient(135deg,#FF8E55,#FF6D05)' },
+  { name:'Team Player', icon:'&#129309;', count:7, grad:'linear-gradient(135deg,#3F3F74,#29294C)' },
+  { name:'Customer First', icon:'&#11088;', count:6, grad:'linear-gradient(135deg,#6A6AAF,#505095)' },
+  { name:'Ownership', icon:'&#128640;', count:5, grad:'linear-gradient(135deg,#505095,#31315A)' },
+  { name:'Above & Beyond', icon:'&#127942;', count:4, grad:'linear-gradient(135deg,#FF9D6C,#FF6D05)' },
+  { name:'Mentor', icon:'&#127891;', count:3, grad:'linear-gradient(135deg,#3F3F74,#29294C)' }
+];
 
 function fmt(n){ return n.toLocaleString('en-US'); }
 function ptsFor(usd){ return Math.round(usd*POINTS_PER_DOLLAR); }
@@ -1000,7 +1070,7 @@ function switchView(v,el){
   document.getElementById('view-'+v).classList.add('active');
   document.querySelectorAll('.sidebar .nav-item').forEach(function(x){x.classList.remove('active');});
   if(el){ el.classList.add('active'); }
-  var titles={feed:'Social Feed',rewards:'Rewards',milestones:'Milestones',leaderboard:'Leaderboard'};
+  var titles={feed:'Social Feed',rewards:'Rewards',milestones:'Milestones',leaderboard:'Leaderboard',profile:'My Profile'};
   document.getElementById('viewTitle').textContent = titles[v] || 'Vantage Recognition';
 }
 function switchRw(p,el){
@@ -1159,8 +1229,9 @@ function renderMilestones(){
   if(f){
     f.innerHTML=MS_FEED.map(function(m){
       var yl=m.years===1?'1 Year':m.years+' Years';
+      var head = m.you ? 'Congratulations <b>Alex</b>, you completed <b>'+yl+'</b> at Vantage Circle' : 'Congratulations <b>'+m.name+'</b> on your Work Anniversary with Vantage Circle';
       return '<div class="mfpost"><div class="mfp-head"><div class="avatar" style="background:'+m.c+'">'+initials(m.name)+'</div>'+
-        '<div><div class="mfp-txt">Congratulations <b>'+m.name+'</b> on your Work Anniversary with Vantage Circle</div><div class="mfp-time">'+m.time+'</div></div></div>'+
+        '<div><div class="mfp-txt">'+head+'</div><div class="mfp-time">'+m.time+'</div></div></div>'+
         '<div class="celebrate"><div class="cl-k">Celebrating</div><div class="cl-y">'+yl+'</div>'+
         '<div class="shield">&#127942;</div><div class="cl-cap">WORK ANNIVERSARY</div></div>'+
         '<div class="mfp-foot"><button class="mfp-act" onclick="fireConfetti();toast(\'Congratulations sent to '+m.name.split(' ')[0]+'.\')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#5c6c7c" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg> Congratulate</button>'+
@@ -1201,6 +1272,14 @@ function lbTab(which, label, el){
   el.classList.add('on');
   renderLeaderboard();
 }
+function renderProfile(){
+  var g=document.getElementById('pfBadges'); if(!g) return;
+  g.innerHTML=PF_BADGES.map(function(b){
+    return '<div class="pf-badge"><div class="pb-medal" style="background:'+b.grad+'">'+b.icon+'</div>'+
+      '<div class="pb-name">'+b.name+'</div><div class="pb-cnt">'+b.count+' times</div>'+
+      '<span class="pb-x">Earned</span></div>';
+  }).join('');
+}
 
 var toastT;
 function toast(m){
@@ -1222,101 +1301,110 @@ function fireConfetti(){
 document.getElementById('recogMsg').addEventListener('input', validateStep);
 document.getElementById('recogOverlay').addEventListener('click',function(e){ if(e.target===this) closeRecognize(); });
 
-/* ===================== GUIDED TOUR ===================== */
-var TOUR=[
-  { spot:'.recognize-btn', click:'.recognize-btn', txt:'Start here. Tap Recognize to appreciate a teammate.' },
-  { spot:'#ms-type .type-card', click:'#ms-type .type-card', txt:'Choose Appreciate to send a recognition badge.' },
-  { spot:'#peopleList .person', click:'#peopleList .person', txt:'Pick a teammate to recognize.', after:function(){ setTimeout(modalNext,140); }, delay:420 },
-  { spot:'#badgeGrid .bopt', click:'#badgeGrid .bopt', txt:'Choose a badge that fits.', after:function(){ setTimeout(modalNext,140); }, delay:420 },
-  { spot:'#advisorBtn', click:'#advisorBtn', txt:'Short on words? Let AI Advisor write it for you.', delay:1150 },
-  { spot:'#footNext', click:'#footNext', txt:'Send it. Tap Appreciate.', delay:600 },
-  { spot:'.feed .card:not(.ghost)', next:true, scroll:true, txt:'Done. Your recognition is now live in the feed for everyone to see.' },
-  { spot:'#navRewards', click:'#navRewards', txt:'You earned points. Open Rewards to spend them.' },
-  { spot:'#gcGrid .gc .gc-redeem', click:'#gcGrid .gc .gc-redeem', scroll:true, delay:600, txt:'Turn points into real rewards. Tap Redeem on any gift card.' },
-  { center:true, done:true, txt:'That is the whole loop: recognize, land in the feed, redeem. Now explore on your own.' }
+/* ===================== CINEMATIC STORY ===================== */
+var story={on:false,i:0,timers:[],glowEl:null};
+function nav(i){ return document.querySelectorAll('.sidebar .nav-item')[i]; }
+function rwTab(i){ return document.querySelectorAll('.rw-tab')[i]; }
+function caption(eye,h,s){
+  document.getElementById('capEye').innerHTML=eye||'';
+  document.getElementById('capH').innerHTML=h||'';
+  document.getElementById('capS').innerHTML=s||'';
+  document.getElementById('storyCap').classList.add('show');
+}
+function glow(sel){ clearGlow(); var el=document.querySelector(sel); if(el){ el.classList.add('story-glow'); story.glowEl=el; } }
+function clearGlow(){ if(story.glowEl){ story.glowEl.classList.remove('story-glow'); story.glowEl=null; } }
+function stAfter(fn,ms){ var t=setTimeout(function(){ if(story.on) fn(); }, ms); story.timers.push(t); }
+function clearTimers(){ story.timers.forEach(clearTimeout); story.timers=[]; }
+function topScroll(){ var s=document.querySelector('.scroll'); if(s) s.scrollTop=0; }
+
+var STORY=[
+  function(){ // intro on the (empty, skeleton) feed
+    closeRecognize(); FEED=[]; renderFeed(); setPoints(4750);
+    lbState='recog'; document.getElementById('myRankNum').textContent='47';
+    switchView('feed', nav(0)); topScroll(); clearGlow();
+    caption('The recognition loop','Great work happens every day.','Here is what Vantage Circle does with it.');
+    return 2700;
+  },
+  function(){ // open a pre-filled recognition
+    openRecognize(); chooseType('appreciate');
+    state.person=PEOPLE[0]; state.badge=BADGES[0]; stepIdx=3; renderCompose();
+    document.getElementById('recogMsg').value=advisorDraft(PEOPLE[0],'Innovation','Specific'); showStep(); validateStep();
+    caption('1 &middot; Recognize','Recognition in the flow of work.','Alex appreciates Maria for Innovation, in seconds.');
+    return 3600;
+  },
+  function(){ // send it -> lands in the feed
+    submitRecognition(); topScroll();
+    caption('1 &middot; Recognize','Sent, and seen by everyone.','Public, on-brand, and tied to a company value.');
+    return 3400;
+  },
+  function(){ // rewards: gift cards
+    switchView('rewards', nav(2)); switchRw('giftcards', rwTab(0)); topScroll(); clearGlow();
+    caption('2 &middot; Reward','Points employees actually want.','A global catalog of gift cards, one tap away.');
+    return 3100;
+  },
+  function(){ // redeem a gift card
+    redeem('Amazon',50,'giftcard');
+    caption('2 &middot; Reward','$50 Amazon gift card, redeemed.','Points become something real, instantly.');
+    return 3200;
+  },
+  function(){ // amazon store + buy a product
+    switchRw('amazon', rwTab(1)); topScroll();
+    caption('3 &middot; Amazon store','Shop Amazon with points.','10M+ products. Checkout entirely with Vantage Points.');
+    stAfter(function(){ redeem('Sony Headphones',328,'amazon'); }, 1600);
+    return 3600;
+  },
+  function(){ // service anniversary
+    switchView('milestones', nav(3)); topScroll(); fireConfetti();
+    caption('4 &middot; Milestones','You just completed 3 years.','Every service anniversary, celebrated automatically.');
+    return 3600;
+  },
+  function(){ // leaderboard: you are #1
+    lbState='story'; renderLeaderboard();
+    document.getElementById('myRankNum').textContent='1';
+    switchView('leaderboard', nav(4)); topScroll(); fireConfetti();
+    stAfter(function(){ glow('.pod.first'); }, 400);
+    caption('5 &middot; Leaderboard','You are #1 this month.','Recognition adds up. Your impact rises to the top.');
+    return 3800;
+  },
+  function(){ // profile badging
+    clearGlow(); switchView('profile', nav(5)); topScroll();
+    caption('6 &middot; Profile','Every value you live, made visible.','Behavior-linked badges build a living record of your impact.');
+    return 3900;
+  }
 ];
-var ti=-1, tourOn=false;
-function startTour(){
-  // reset app to a clean starting state
-  closeRecognize(); FEED=[]; renderFeed(); setPoints(4750);
-  switchView('feed', document.querySelectorAll('.sidebar .nav-item')[0]);
-  document.querySelector('.scroll').scrollTop=0;
+function updateProg(){ document.getElementById('storyProg').style.width = Math.round(story.i/STORY.length*100)+'%'; }
+function startStory(){
+  clearTimers(); clearGlow(); story.on=true; story.i=0;
   document.getElementById('gfab').style.display='none';
-  tourOn=true; ti=0;
-  document.getElementById('tour').classList.add('on');
-  showTourStep();
-  requestAnimationFrame(tourTick);
+  document.getElementById('storyEnd').classList.remove('show');
+  document.getElementById('story').classList.add('on');
+  runStory();
 }
-function tourTick(){
-  if(!tourOn) return;
-  var s=TOUR[ti]; if(s) positionTour(s);
-  requestAnimationFrame(tourTick);
+function runStory(){
+  if(!story.on) return;
+  if(story.i>=STORY.length){ finishStory(); return; }
+  var hold = STORY[story.i]() || 3200;
+  story.i++; updateProg();
+  stAfter(runStory, hold);
 }
-function endTour(){
-  tourOn=false; document.getElementById('tour').classList.remove('on');
+function finishStory(){
+  clearTimers(); clearGlow();
+  document.getElementById('storyCap').classList.remove('show');
+  document.getElementById('storyProg').style.width='100%';
+  document.getElementById('storyEnd').classList.add('show');
+  story.on=false; // end card handles replay / explore
+  story.ended=true;
+}
+function endStory(){
+  clearTimers(); clearGlow(); story.on=false;
+  document.getElementById('story').classList.remove('on');
+  document.getElementById('storyCap').classList.remove('show');
+  document.getElementById('storyEnd').classList.remove('show');
+  document.getElementById('storyProg').style.width='0';
   document.getElementById('gfab').style.display='flex';
 }
-function tourNext(){ if(ti<TOUR.length-1){ ti++; showTourStep(); } else { endTour(); } }
-function showTourStep(){
-  var s=TOUR[ti]; if(!s){ endTour(); return; }
-  document.getElementById('tStep').textContent = s.done?'All set':('Step '+(ti+1)+' of '+(TOUR.length-1));
-  document.getElementById('tTxt').textContent = s.txt;
-  var nx=document.getElementById('tNx');
-  nx.style.display = (s.next||s.done)?'inline-block':'none';
-  nx.textContent = s.done?'Explore on my own':'Got it';
-  if(s.done){ nx.onclick=endTour; } else if(s.next){ nx.onclick=tourNext; }
-  if(s.scroll){ var el=document.querySelector(s.spot); if(el){ el.scrollIntoView({block:'center'}); } }
-  positionTour(s);
-}
-function setBox(el,x,y,w,h){
-  el.style.display='block'; el.style.position='fixed';
-  el.style.left=x+'px'; el.style.top=y+'px';
-  el.style.width=Math.max(0,w)+'px'; el.style.height=Math.max(0,h)+'px';
-}
-function positionTour(s){
-  var ring=document.getElementById('tRing'), hand=document.getElementById('tHand'), tip=document.getElementById('tTip');
-  var dT=document.getElementById('dT'),dB=document.getElementById('dB'),dL=document.getElementById('dL'),dR=document.getElementById('dR');
-  var vw=window.innerWidth, vh=window.innerHeight;
-  tip.style.position='fixed'; hand.style.position='fixed';
-  if(s.center){
-    setBox(dT,0,0,vw,vh);
-    dB.style.display='none'; dL.style.display='none'; dR.style.display='none';
-    ring.style.display='none'; hand.style.display='none';
-    tip.style.left=(vw/2-136)+'px'; tip.style.top=(vh/2-72)+'px';
-    return;
-  }
-  var el = document.querySelector(s.spot);
-  if(!el) return; // target not in DOM yet; keep last spotlight
-  var r=el.getBoundingClientRect();
-  if(r.width===0 && r.height===0) return; // target hidden mid-transition; keep last spotlight
-  var pad=8, x=Math.max(0,r.left-pad), y=Math.max(0,r.top-pad), w=r.width+2*pad, h=r.height+2*pad;
-  setBox(dT,0,0,vw,y);
-  setBox(dB,0,y+h,vw,vh-(y+h));
-  setBox(dL,0,y,x,h);
-  setBox(dR,x+w,y,vw-(x+w),h);
-  setBox(ring,x,y,w,h);
-  var below = (y+h+56) < vh;
-  hand.style.display='block';
-  hand.textContent = below ? '☝' : '👇';
-  hand.style.left=(x+w-14)+'px';
-  hand.style.top=(below?(y+h+2):(y-46))+'px';
-  var tw=272, th=130;
-  var tx=Math.min(Math.max(12,x), vw-tw-12);
-  var ty = below ? (y+h+52) : (y-th-16);
-  if(ty<12) ty=y+h+52;
-  tip.style.left=tx+'px'; tip.style.top=ty+'px';
-}
-document.addEventListener('click',function(e){
-  if(!tourOn) return;
-  var s=TOUR[ti]; if(!s || !s.click) return;
-  if(e.target.closest(s.click)){
-    if(s.after) s.after();
-    setTimeout(tourNext, s.delay||360);
-  }
-},true);
-window.addEventListener('resize',function(){ if(tourOn) showTourStep(); });
 
-renderFeed(); renderGiftcards(); renderAmazon(); renderMerch(); renderExperiences(); renderMilestones(); renderLeaderboard(); setPoints(state.points);
+renderFeed(); renderGiftcards(); renderAmazon(); renderMerch(); renderExperiences(); renderMilestones(); renderLeaderboard(); renderProfile(); setPoints(state.points);
 
 /* ===== scale the iPad to fit whatever space the host page gives us ===== */
 var DEV_W=1234, DEV_H=874, PAD=36;
@@ -1333,7 +1421,7 @@ function fitIpad(){
 window.addEventListener('resize',fitIpad); fitIpad();
 
 /* auto-start the guided tour once everything is laid out */
-setTimeout(startTour, 750);
+setTimeout(startStory, 700);
 </script>
 </body>
 </html>
