@@ -1347,20 +1347,20 @@ var GUIDE=[
     spot:'.recognize-btn', click:'.recognize-btn',
     eye:'Step 1 of 8 &middot; Recognize', h:'Recognize a teammate', s:'Great work should never go unseen. Start right here.', do:'Tap Recognize' },
 
-  { spot:'#ms-type .type-card', click:'#ms-type .type-card',
+  { hole:'.modal', spot:'#ms-type .type-card', click:'#ms-type .type-card',
     eye:'Step 2 of 8 &middot; Recognize', h:'Send an appreciation', s:'A non-monetary badge tied to a company value. No budget needed.', do:'Tap Appreciate' },
 
-  { spot:'#peopleList .person', click:'#peopleList .person', after:function(){ gAfter(modalNext,140); }, delay:430,
+  { hole:'.modal', spot:'#peopleList .person', click:'#peopleList .person', after:function(){ gAfter(modalNext,140); }, delay:430,
     eye:'Step 3 of 8 &middot; Recognize', h:'Pick who to celebrate', s:'Anyone, any team. Recognition flows in every direction.', do:'Choose Maria Chen' },
 
-  { spot:'#badgeGrid .bopt', click:'#badgeGrid .bopt', after:function(){ gAfter(modalNext,140); }, delay:430,
+  { hole:'.modal', spot:'#badgeGrid .bopt', click:'#badgeGrid .bopt', after:function(){ gAfter(modalNext,140); }, delay:430,
     eye:'Step 4 of 8 &middot; Recognize', h:'Choose the value', s:'Recognition tied to behaviour is what actually shapes culture.', do:'Pick a badge' },
 
   { setup:function(){ document.getElementById('recogMsg').value=''; },
-    spot:'#advisorBtn', click:'#advisorBtn', delay:1150,
+    hole:'.modal', spot:'#advisorBtn', click:'#advisorBtn', delay:1150,
     eye:'Step 5 of 8 &middot; Recognize', h:'Let AI write it', s:'Stuck for words? The AI Advisor drafts a personal message in a click.', do:'Tap AI Advisor' },
 
-  { spot:'#footNext', click:'#footNext', delay:520,
+  { hole:'.modal', spot:'#footNext', click:'#footNext', delay:520,
     eye:'Step 5 of 8 &middot; Recognize', h:'Make it public', s:'One tap and it is live for the whole company to see and celebrate.', do:'Tap Appreciate' },
 
   { setup:function(){ topScroll(); }, spot:'.feed .card:not(.ghost)', auto:2600, scroll:true,
@@ -1369,13 +1369,13 @@ var GUIDE=[
   { spot:'#navRewards', click:'#navRewards',
     eye:'Step 6 of 8 &middot; Reward', h:'Now spend those points', s:'Recognition earns points. Points become rewards people actually want.', do:'Open Rewards' },
 
-  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:600,
+  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, hole:'#gcGrid .gc:first-child', spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:600,
     eye:'Step 6 of 8 &middot; Reward', h:'Redeem a gift card', s:'A global catalog of top brands. 1 point = $1.', do:'Redeem Amazon $50' },
 
   { spot:'.rw-tab:nth-child(2)', click:'.rw-tab:nth-child(2)',
     eye:'Step 7 of 8 &middot; Amazon store', h:'Or shop Amazon directly', s:'10M+ products, checkout entirely with Vantage Points.', do:'Open Amazon Store' },
 
-  { setup:function(){ topScroll(); }, spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:700,
+  { setup:function(){ topScroll(); }, hole:'#amzGrid .prod:first-child', spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:700,
     eye:'Step 7 of 8 &middot; Amazon store', h:'Buy it with points', s:'The reward lands the same day. No cash, no admin.', do:'Buy with points' },
 
   { spot:'#navMilestones', click:'#navMilestones',
@@ -1408,25 +1408,33 @@ function gEls(){ return {
 function setBox(el,x,y,w,h){ el.style.display='block'; el.style.left=x+'px'; el.style.top=y+'px'; el.style.width=Math.max(0,w)+'px'; el.style.height=Math.max(0,h)+'px'; }
 function positionGuide(s){
   var e=gEls(), vw=window.innerWidth, vh=window.innerHeight;
-  var el=document.querySelector(s.spot);
-  if(!el) return;
-  var r=el.getBoundingClientRect();
-  if(r.width===0 && r.height===0) return; // hidden mid-transition; hold last frame
-  var pad=8, x=Math.max(0,r.left-pad), y=Math.max(0,r.top-pad), w=r.width+2*pad, h=r.height+2*pad;
-  setBox(e.dT,0,0,vw,y);
-  setBox(e.dB,0,y+h,vw,vh-(y+h));
-  setBox(e.dL,0,y,x,h);
-  setBox(e.dR,x+w,y,vw-(x+w),h);
+  var ringEl=document.querySelector(s.spot);
+  if(!ringEl) return;
+  var rr=ringEl.getBoundingClientRect();
+  if(rr.width===0 && rr.height===0) return; // hidden mid-transition; hold last frame
+  // The "hole" (kept fully sharp, no blur) is the meaningful SECTION; ring points to the element inside it.
+  var holeEl=document.querySelector(s.hole||s.spot) || ringEl;
+  var hr=holeEl.getBoundingClientRect();
+  if(hr.width===0 && hr.height===0) hr=rr;
+  var hp=6, hx=Math.max(0,hr.left-hp), hy=Math.max(0,hr.top-hp), hw=hr.width+2*hp, hh=hr.height+2*hp;
+  setBox(e.dT,0,0,vw,hy);
+  setBox(e.dB,0,hy+hh,vw,vh-(hy+hh));
+  setBox(e.dL,0,hy,hx,hh);
+  setBox(e.dR,hx+hw,hy,vw-(hx+hw),hh);
+  // ring hugs the specific element
+  var rp=6, x=Math.max(0,rr.left-rp), y=Math.max(0,rr.top-rp), w=rr.width+2*rp, h=rr.height+2*rp;
   setBox(e.ring,x,y,w,h);
-  var below=(y+h+64)<vh;
+  // hand + tip anchor to the ring element, but sit OUTSIDE the sharp hole so they never cover content
+  var below=(hy+hh+64)<vh;
   e.hand.style.display='block';
   e.hand.textContent = below ? '☝' : '👇';
-  e.hand.style.left=(x+w-12)+'px';
-  e.hand.style.top=(below?(y+h+2):(y-42))+'px';
+  e.hand.style.left=Math.min(x+w-12, vw-40)+'px';
+  e.hand.style.top=(below?(hy+hh+2):(hy-42))+'px';
   var tw=290, th=150;
   var tx=Math.min(Math.max(12,x), vw-tw-12);
-  var ty = below ? (y+h+50) : (y-th-14);
-  if(ty<12) ty=y+h+50;
+  var ty = below ? (hy+hh+50) : (hy-th-14);
+  if(ty<12) ty=hy+hh+50;
+  if(ty+th>vh-12) ty=vh-th-12;
   e.tip.style.left=tx+'px'; e.tip.style.top=ty+'px';
 }
 function guideTick(){ if(!guide.on) return; var s=GUIDE[guide.i]; if(s) positionGuide(s); requestAnimationFrame(guideTick); }
