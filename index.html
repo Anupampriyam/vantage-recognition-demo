@@ -475,12 +475,14 @@ a{color:inherit;text-decoration:none}
 #guide.on{display:block}
 #gProg{position:fixed;top:0;left:0;height:4px;width:0;background:linear-gradient(90deg,var(--accent),#ffb07a);z-index:6;transition:width .3s ease}
 /* four dim+blur panels leave a sharp hole around the active element (video-like blurred backdrop) */
-.gdim{position:fixed;background:rgba(20,22,42,.42);backdrop-filter:blur(3.5px);-webkit-backdrop-filter:blur(3.5px);pointer-events:auto}
-.gring{position:fixed;border:2.5px solid var(--accent);border-radius:12px;box-shadow:0 0 0 5px rgba(255,109,5,.25),0 0 26px rgba(255,109,5,.35);pointer-events:none;animation:gpulse 1.6s ease-in-out infinite}
+/* --ease drives the smooth "spotlight glides between steps" motion */
+.gdim{position:fixed;background:rgba(20,22,42,.42);backdrop-filter:blur(3.5px);-webkit-backdrop-filter:blur(3.5px);pointer-events:auto;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1),width .55s cubic-bezier(.6,.02,.2,1),height .55s cubic-bezier(.6,.02,.2,1)}
+.gring{position:fixed;border:2.5px solid var(--accent);border-radius:12px;box-shadow:0 0 0 5px rgba(255,109,5,.25),0 0 26px rgba(255,109,5,.35);pointer-events:none;animation:gpulse 1.6s ease-in-out infinite;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1),width .55s cubic-bezier(.6,.02,.2,1),height .55s cubic-bezier(.6,.02,.2,1)}
 @keyframes gpulse{0%,100%{box-shadow:0 0 0 5px rgba(255,109,5,.25),0 0 22px rgba(255,109,5,.3)}50%{box-shadow:0 0 0 8px rgba(255,109,5,.14),0 0 30px rgba(255,109,5,.45)}}
-.ghand{position:fixed;font-size:34px;pointer-events:none;filter:drop-shadow(0 4px 5px rgba(0,0,0,.35));animation:hbob 1s ease-in-out infinite;z-index:5}
+.ghand{position:fixed;font-size:34px;pointer-events:none;filter:drop-shadow(0 4px 5px rgba(0,0,0,.35));z-index:5;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1)}
+.ghand span{display:inline-block;animation:hbob 1s ease-in-out infinite}
 @keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
-.gtip{position:fixed;max-width:290px;background:#fff;border-radius:16px;box-shadow:0 20px 48px -10px rgba(8,10,26,.6);padding:16px 18px;pointer-events:auto;z-index:5}
+.gtip{position:fixed;max-width:290px;background:#fff;border-radius:16px;box-shadow:0 20px 48px -10px rgba(8,10,26,.6);padding:16px 18px;pointer-events:auto;z-index:5;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1)}
 .gtip .gt-eye{font-size:11px;font-weight:900;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-600)}
 .gtip .gt-h{font-size:16.5px;font-weight:900;color:var(--navy);line-height:1.25;margin-top:4px}
 .gtip .gt-s{font-size:13px;color:var(--text-2);font-weight:400;line-height:1.45;margin-top:5px}
@@ -1457,7 +1459,8 @@ function positionGuide(s){
   // hand + tip anchor to the ring element, but sit OUTSIDE the sharp hole so they never cover content
   var below=(hy+hh+64)<vh;
   e.hand.style.display='block';
-  e.hand.textContent = below ? '☝' : '👇';
+  var hchar = below ? '☝' : '👇';
+  if(e.hand.getAttribute('data-dir')!==hchar){ e.hand.innerHTML='<span>'+hchar+'</span>'; e.hand.setAttribute('data-dir',hchar); }
   e.hand.style.left=Math.min(x+w-12, vw-40)+'px';
   e.hand.style.top=(below?(hy+hh+2):(hy-42))+'px';
   var tw=290, th=150;
