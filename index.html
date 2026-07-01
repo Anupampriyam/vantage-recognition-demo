@@ -115,6 +115,8 @@ a{color:inherit;text-decoration:none}
 .badge-banner .btitle{font-weight:900;font-size:21px;margin-top:8px}
 .badge-banner .brec{font-size:13.5px;opacity:.95;margin-top:3px;font-weight:400}
 .badge-banner .pts{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);border-radius:50px;font-size:12.5px;font-weight:900;padding:3px 12px;margin-top:11px}
+.badge-banner.medal-banner{background:linear-gradient(160deg,#f6f5fa,#eef0f6);color:var(--navy);padding:22px 18px 26px}
+.badge-banner.medal-banner .brec2{font-size:14px;font-weight:900;color:var(--navy);margin-top:16px}
 .tags{padding:0 16px 12px;display:flex;gap:7px;flex-wrap:wrap}
 .tag{font-size:12px;color:var(--navy);background:#eef1f6;border-radius:50px;padding:3px 11px;font-weight:700}
 .card-actions{display:flex;align-items:center;gap:4px;padding:6px 10px;border-top:1px solid #f0eff3}
@@ -226,6 +228,15 @@ a{color:inherit;text-decoration:none}
 .bopt .bn{font-weight:900;font-size:14px;color:var(--navy);margin-top:6px}
 .bopt .bd{font-size:11px;color:var(--text-2);margin-top:2px;font-weight:400}
 .award-pts{margin-top:8px;display:inline-block;font-size:11.5px;font-weight:900;color:var(--warning);background:#fff5e6;border-radius:50px;padding:2px 10px}
+/* recognition medallion (illustrated badge + ribbon banner) */
+.medal{position:relative;display:inline-block;width:var(--ms,96px)}
+.medal-circle{width:var(--ms,96px);height:var(--ms,96px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:calc(var(--ms,96px)*.42);box-shadow:0 6px 16px -4px rgba(16,18,36,.35),inset 0 2px 6px rgba(255,255,255,.22);margin:0 auto}
+.medal-rib{position:absolute;left:50%;bottom:calc(var(--ms,96px)*-0.06);transform:translateX(-50%);color:#fff;font-weight:900;font-size:calc(var(--ms,96px)*.135);letter-spacing:.02em;white-space:nowrap;padding:5px 16px;border-radius:5px;text-transform:uppercase;box-shadow:0 4px 10px -2px rgba(16,18,36,.4)}
+.medal-rib::before,.medal-rib::after{content:'';position:absolute;top:0;width:0;height:0;border-style:solid}
+.medal-rib::before{left:-8px;border-width:calc(var(--ms,96px)*.145) 8px 0 0;border-color:currentColor transparent transparent transparent;filter:brightness(.7)}
+.medal-rib::after{right:-8px;border-width:calc(var(--ms,96px)*.145) 0 0 8px;border-color:currentColor transparent transparent transparent;filter:brightness(.7)}
+.bopt .medal{--ms:78px;margin-bottom:14px}
+.bopt .bd{margin-top:12px}
 .recap{display:flex;align-items:center;gap:10px;background:var(--brand-25);border-radius:12px;padding:11px 13px;margin-bottom:15px}
 .recap .ri{font-size:24px}
 .recap .rt{font-size:13px;color:var(--text);font-weight:400}
@@ -869,11 +880,14 @@ var GRAD_NAVY='linear-gradient(135deg,#3F3F74,#29294C)';   /* Space Cadet */
 var GRAD_GOLD='linear-gradient(135deg,#505095,#31315A)';   /* deep indigo */
 var GRAD_GREEN='linear-gradient(135deg,#6A6AAF,#505095)';  /* lavender indigo */
 
+/* Non-monetary recognition badges (medallion + ribbon). circle = medallion bg, rib = ribbon color. */
+var CIRC_NAVY='radial-gradient(circle at 50% 38%,#3a3a63,#29294C)';
+var CIRC_ORANGE='radial-gradient(circle at 50% 38%,#ff8f4d,#f26a12)';
 var BADGES = [
-  { name:'Agile', icon:'&#9889;', desc:'Adapted fast and kept the team moving', grad:GRAD_ORANGE },
-  { name:'Innovation', icon:'&#128161;', desc:'Brought a bold new idea to life', grad:GRAD_NAVY },
-  { name:'Team Player', icon:'&#129309;', desc:'Lifted the whole team up', grad:GRAD_GREEN },
-  { name:'Ownership', icon:'&#128640;', desc:'Took it on and saw it through', grad:GRAD_GOLD }
+  { name:'Agility Ace', icon:'&#128161;', desc:'Adapted fast and kept the team moving', circle:CIRC_ORANGE, rib:'#29294C', grad:GRAD_ORANGE },
+  { name:'Thank You', icon:'&#129309;', desc:'A simple, heartfelt thank you', circle:CIRC_NAVY, rib:'#FF6D05', grad:GRAD_NAVY },
+  { name:'Cheers', icon:'&#127881;', desc:'Celebrating a shared win', circle:CIRC_ORANGE, rib:'#29294C', grad:GRAD_ORANGE },
+  { name:'Congratulations', icon:'&#127942;', desc:'A milestone worth marking', circle:CIRC_ORANGE, rib:'#29294C', grad:GRAD_ORANGE }
 ];
 var AWARDS = [
   { name:'Spot Award', icon:'&#127919;', desc:'On-the-spot great work', points:250, grad:GRAD_NAVY },
@@ -1036,12 +1050,18 @@ function buildCard(p,i){
   var commentsHtml = p.comments.map(function(c){
     return '<div class="comment"><div class="avatar" style="background:'+c.c+'">'+initials(c.by)+'</div><div><div class="bubble"><b>'+c.by+'</b>'+c.text+'</div><div class="cmeta">'+c.time+' &middot; Like &middot; Reply</div></div></div>';
   }).join('');
+  var banner;
+  if(p.circle){ // non-monetary badge -> illustrated medallion on a soft background
+    banner='<div class="badge-banner medal-banner"><div style="--ms:104px">'+medalHTML({icon:p.icon,circle:p.circle,rib:p.rib,name:p.badge})+'</div><div class="brec2">'+p.receiver+'</div></div>';
+  } else {
+    banner='<div class="badge-banner" style="background:'+p.grad+'"><div class="bicon">'+p.icon+'</div><div class="btitle">'+p.badge+'</div><div class="brec">'+p.receiver+'</div>'+ptsChip+'</div>';
+  }
   card.innerHTML =
     '<div class="card-head"><div class="avatar" style="background:'+p.receiverC+'">'+initials(p.receiver)+'</div>'+
       '<div><div class="who"><b>'+p.receiver+'</b> <span class="by">'+verb+' by</span> <b>'+p.giver+'</b></div><div class="time">'+p.time+'</div></div>'+
       '<div class="more">&#8943;</div></div>'+
     '<div class="card-msg">'+p.msg+'</div>'+
-    '<div class="badge-banner" style="background:'+p.grad+'"><div class="bicon">'+p.icon+'</div><div class="btitle">'+p.badge+'</div><div class="brec">'+p.receiver+'</div>'+ptsChip+'</div>'+
+    banner+
     (tagsHtml?'<div class="tags">'+tagsHtml+'</div>':'')+
     '<div class="card-actions">'+
       '<button class="act'+(p.liked?' liked':'')+'" onclick="toggleLike('+i+',this)"><svg width="17" height="17" viewBox="0 0 24 24" fill="'+(p.liked?'#F04438':'none')+'" stroke="'+(p.liked?'#F04438':'#5c6c7c')+'" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg> <span class="cnt">'+p.likes+'</span> Like</button>'+
@@ -1146,14 +1166,24 @@ function renderPeople(){
     l.appendChild(b);
   });
 }
+function medalHTML(b){
+  var circle = b.circle || 'radial-gradient(circle at 50% 38%,#3a3a63,#29294C)';
+  var rib = b.rib || '#FF6D05';
+  return '<div class="medal"><div class="medal-circle" style="background:'+circle+'">'+b.icon+'</div>'+
+    '<div class="medal-rib" style="background:'+rib+';color:'+rib+'"><span style="color:#fff;position:relative;z-index:1">'+b.name+'</span></div></div>';
+}
 function renderBadges(){
   var g=document.getElementById('badgeGrid'); g.innerHTML='';
   document.getElementById('badgeStepLabel').textContent = state.type==='nominate'?'Available awards':'Pick a badge';
   var list = state.type==='nominate' ? AWARDS : BADGES;
   list.forEach(function(b){
     var el=document.createElement('button'); el.className='bopt'+(state.badge&&state.badge.name===b.name?' sel':'');
-    var pts = b.points!==undefined ? '<div class="award-pts">&#11088; '+b.points+' pts</div>' : '';
-    el.innerHTML='<div class="bi">'+b.icon+'</div><div class="bn">'+b.name+'</div><div class="bd">'+b.desc+'</div>'+pts;
+    el.setAttribute('data-name', b.name);
+    if(b.points!==undefined){
+      el.innerHTML='<div class="bi">'+b.icon+'</div><div class="bn">'+b.name+'</div><div class="bd">'+b.desc+'</div><div class="award-pts">&#11088; '+b.points+' pts</div>';
+    } else {
+      el.innerHTML=medalHTML(b)+'<div class="bd">'+b.desc+'</div>';
+    }
     el.onclick=function(){ state.badge=b; renderBadges(); validateStep(); };
     g.appendChild(el);
   });
@@ -1185,6 +1215,7 @@ function submitRecognition(){
   FEED.unshift({
     giver:'Alex Morgan', giverC:'#3f7fd6', receiver:state.person.name, receiverC:state.person.c,
     type:state.type, badge:state.badge.name, icon:state.badge.icon, grad:state.badge.grad, points:state.badge.points||0,
+    circle:state.badge.circle, rib:state.badge.rib,
     msg:msg, tags:tags, time:'just now', likes:0, liked:false, comments:[]
   });
   renderFeed(); closeRecognize();
