@@ -1383,17 +1383,17 @@ var GUIDE=[
   { hole:'.modal', spot:'#ms-type .type-card', click:'#ms-type .type-card',
     eye:'Step 2 of 8 &middot; Recognize', h:'Send an appreciation', s:'A non-monetary badge tied to a company value. No budget needed.', do:'Tap Appreciate' },
 
-  { hole:'.modal', spot:'#peopleList .person', click:'#peopleList .person', after:function(){ gAfter(modalNext,140); }, delay:430,
+  { hole:'.modal', spot:'#peopleList .person', click:'#peopleList .person', after:function(){ gAfter(modalNext,60); }, delay:210,
     eye:'Step 3 of 8 &middot; Recognize', h:'Pick who to celebrate', s:'Anyone, any team. Recognition flows in every direction.', do:'Choose Maria Chen' },
 
-  { hole:'.modal', spot:'#badgeGrid .bopt', click:'#badgeGrid .bopt', after:function(){ gAfter(modalNext,140); }, delay:430,
+  { hole:'.modal', spot:'#badgeGrid .bopt', click:'#badgeGrid .bopt', after:function(){ gAfter(modalNext,60); }, delay:210,
     eye:'Step 4 of 8 &middot; Recognize', h:'Choose the value', s:'Recognition tied to behaviour is what actually shapes culture.', do:'Pick a badge' },
 
   { setup:function(){ document.getElementById('recogMsg').value=''; },
-    hole:'.modal', spot:'#advisorBtn', click:'#advisorBtn', delay:1150,
+    hole:'.modal', spot:'#advisorBtn', click:'#advisorBtn', delay:1000,
     eye:'Step 5 of 8 &middot; Recognize', h:'Let AI write it', s:'Stuck for words? The AI Advisor drafts a personal message in a click.', do:'Tap AI Advisor' },
 
-  { hole:'.modal', spot:'#footNext', click:'#footNext', delay:520,
+  { hole:'.modal', spot:'#footNext', click:'#footNext', delay:300,
     eye:'Step 5 of 8 &middot; Recognize', h:'Make it public', s:'One tap and it is live for the whole company to see and celebrate.', do:'Tap Appreciate' },
 
   { setup:function(){ topScroll(); }, spot:'.feed .card:not(.ghost)', auto:2600, scroll:true,
@@ -1402,13 +1402,13 @@ var GUIDE=[
   { spot:'#pointsPill', click:'#pointsPill',
     eye:'Step 6 of 8 &middot; Reward', h:'Now spend those points', s:'Recognition earns points. Tap your balance to open Rewards.', do:'Tap your points' },
 
-  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, hole:'#view-rewards', spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:600,
+  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, hole:'#view-rewards', spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:340,
     eye:'Step 6 of 8 &middot; Reward', h:'Redeem a gift card', s:'A global catalog of top brands, all in view. 1 point = $1.', do:'Redeem Amazon $50' },
 
   { hole:'#view-rewards', spot:'.rw-tab:nth-child(2)', click:'.rw-tab:nth-child(2)',
     eye:'Step 7 of 8 &middot; Amazon store', h:'Or shop Amazon directly', s:'10M+ products, the whole store, checkout with points.', do:'Open Amazon Store' },
 
-  { setup:function(){ topScroll(); }, hole:'#view-rewards', spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:700,
+  { setup:function(){ topScroll(); }, hole:'#view-rewards', spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:380,
     eye:'Step 7 of 8 &middot; Amazon store', h:'Buy it with points', s:'The reward lands the same day. No cash, no admin.', do:'Buy with points' },
 
   { spot:'#navMilestones', click:'#navMilestones',
@@ -1510,7 +1510,7 @@ document.addEventListener('click',function(e){
   var s=GUIDE[guide.i]; if(!s || !s.click) return;
   if(e.target.closest(s.click)){
     if(s.after) s.after();
-    gAfter(guideNext, s.delay||360);
+    gAfter(guideNext, s.delay||140);
   }
 },true);
 
