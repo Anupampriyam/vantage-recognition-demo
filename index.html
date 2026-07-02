@@ -1359,7 +1359,7 @@ document.getElementById('recogOverlay').addEventListener('click',function(e){ if
 /* ===================== INTERACTIVE GUIDE (blur-focus) ===================== */
 var guide={on:false,i:0,timers:[]};
 var autoPlay=true, autoT=null, idleT=null, autoClicking=false;
-var STEP_MS=1000, RESULT_MS=3000, IDLE_MS=5000; // video pace: 1s per step, 3s on result pages, resume after 5s idle
+var STEP_MS=500, RESULT_MS=3000, IDLE_MS=5000; // video pace: 0.5s per step, 3s on result pages, resume after 5s idle
 function nav(i){ return document.querySelectorAll('.sidebar .nav-item')[i]; }
 function rwTab(i){ return document.querySelectorAll('.rw-tab')[i]; }
 function gAfter(fn,ms){ var t=setTimeout(function(){ if(guide.on) fn(); }, ms); guide.timers.push(t); }
@@ -1504,13 +1504,14 @@ function positionGuide(s){
   var hr=holeEl.getBoundingClientRect();
   if(hr.width===0 && hr.height===0) hr=rr;
   var hp=6;
-  // clamp the hole to the screen so the dim/blur never spills outside the tablet
-  var hL=Math.max(S.x, hr.left-hp), hT=Math.max(S.y, hr.top-hp), hR=Math.min(S.r, hr.right+hp), hB=Math.min(S.b, hr.bottom+hp);
-  var hHt=Math.max(0,hB-hT);
-  setBox(e.dT, S.x, S.y, S.w, hT-S.y);
-  setBox(e.dB, S.x, hB, S.w, S.b-hB);
-  setBox(e.dL, S.x, hT, hL-S.x, hHt);
-  setBox(e.dR, hR, hT, S.r-hR, hHt);
+  // clamp the hole to the screen; round to whole px + overlap panels 1px so no thin seam shows through
+  var Sx=Math.round(S.x), Sy=Math.round(S.y), Sr=Math.round(S.r), Sb=Math.round(S.b);
+  var hL=Math.round(Math.max(S.x, hr.left-hp)), hT=Math.round(Math.max(S.y, hr.top-hp)), hR=Math.round(Math.min(S.r, hr.right+hp)), hB=Math.round(Math.min(S.b, hr.bottom+hp));
+  var ov=1; // overlap so adjacent panels never leave a sub-pixel gap
+  setBox(e.dT, Sx, Sy, Sr-Sx, (hT-Sy)+ov);                 // full width, top band (bleeds 1px down)
+  setBox(e.dB, Sx, hB-ov, Sr-Sx, (Sb-hB)+ov);              // full width, bottom band (bleeds 1px up)
+  setBox(e.dL, Sx, hT, (hL-Sx)+ov, hB-hT);                 // left of hole (bleeds 1px right)
+  setBox(e.dR, hR-ov, hT, (Sr-hR)+ov, hB-hT);              // right of hole (bleeds 1px left)
   // ring hugs the specific element
   var rp=6, x=Math.max(S.x,rr.left-rp), y=Math.max(S.y,rr.top-rp), w=rr.width+2*rp, h=rr.height+2*rp;
   setBox(e.ring,x,y,w,h);
