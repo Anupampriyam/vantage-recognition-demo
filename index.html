@@ -473,12 +473,19 @@ a{color:inherit;text-decoration:none}
 /* ===== interactive guide (blur-focus) ===== */
 #guide{position:fixed;inset:0;z-index:500;display:none;font-family:'Lato',sans-serif;pointer-events:none}
 #guide.on{display:block}
-/* four dim+blur panels leave a sharp hole around the active element (video-like blurred backdrop) */
-/* premium glide: easeOutExpo, quick start into a soft settle */
-.gdim{position:fixed;background:rgba(17,19,38,.5);backdrop-filter:blur(4px) saturate(1.05);-webkit-backdrop-filter:blur(4px) saturate(1.05);pointer-events:auto;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1),width .6s cubic-bezier(.16,1,.3,1),height .6s cubic-bezier(.16,1,.3,1)}
-.gring{position:fixed;border:2px solid var(--accent);border-radius:14px;box-shadow:0 0 0 4px rgba(255,109,5,.22),0 0 22px rgba(255,109,5,.35),inset 0 0 12px rgba(255,109,5,.12);pointer-events:none;animation:gpulse 2s ease-in-out infinite;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1),width .6s cubic-bezier(.16,1,.3,1),height .6s cubic-bezier(.16,1,.3,1)}
-@keyframes gpulse{0%,100%{box-shadow:0 0 0 4px rgba(255,109,5,.2),0 0 18px rgba(255,109,5,.3),inset 0 0 12px rgba(255,109,5,.1)}50%{box-shadow:0 0 0 7px rgba(255,109,5,.1),0 0 34px rgba(255,109,5,.5),inset 0 0 16px rgba(255,109,5,.16)}}
-.ghand{position:fixed;font-size:32px;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));z-index:5;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1),opacity .3s ease}
+/* single-surface spotlight: one clipped div dims the screen with a soft rounded hole,
+   moved with GPU transforms for 60fps-smooth motion (no per-frame blur/layout) */
+#gClip{position:fixed;overflow:hidden;border-radius:16px;pointer-events:none;z-index:1}
+#gSpot{position:absolute;left:0;top:0;border-radius:16px;background:transparent;
+  box-shadow:0 0 0 100vmax rgba(15,17,34,.6);
+  transition:transform .6s cubic-bezier(.22,1,.36,1),width .6s cubic-bezier(.22,1,.36,1),height .6s cubic-bezier(.22,1,.36,1);
+  will-change:transform,width,height}
+.gring{position:fixed;left:0;top:0;border:2px solid var(--accent);border-radius:14px;box-shadow:0 0 0 4px rgba(255,109,5,.2),0 0 22px rgba(255,109,5,.4),inset 0 0 12px rgba(255,109,5,.12);pointer-events:none;z-index:3;
+  transition:transform .6s cubic-bezier(.22,1,.36,1),width .6s cubic-bezier(.22,1,.36,1),height .6s cubic-bezier(.22,1,.36,1);
+  will-change:transform,width,height}
+.gring::after{content:'';position:absolute;inset:-2px;border-radius:14px;box-shadow:0 0 26px rgba(255,109,5,.35);animation:gpulse 2.4s ease-in-out infinite}
+@keyframes gpulse{0%,100%{opacity:.55}50%{opacity:1}}
+.ghand{position:fixed;left:0;top:0;font-size:32px;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));z-index:5;transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .3s ease}
 .ghand span{display:inline-block;animation:hbob 1.4s cubic-bezier(.45,0,.55,1) infinite}
 @keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 .gtip{position:fixed;width:222px;background:linear-gradient(155deg,#3a3a66,#26264a);border:1px solid rgba(255,140,60,.5);border-radius:18px;box-shadow:0 24px 60px -16px rgba(6,8,22,.75),0 0 0 1px rgba(255,255,255,.04) inset,0 0 34px -8px rgba(255,109,5,.35);padding:16px 17px;pointer-events:auto;z-index:5;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1)}
@@ -834,9 +841,9 @@ a{color:inherit;text-decoration:none}
 
 <div class="toast" id="toast"><span class="tdot"></span><span id="toastMsg"></span></div>
 
-<!-- interactive guide overlay (blur-focus + captions) -->
+<!-- interactive guide overlay (single-surface spotlight + captions) -->
 <div id="guide">
-  <div class="gdim" id="dT"></div><div class="gdim" id="dB"></div><div class="gdim" id="dL"></div><div class="gdim" id="dR"></div>
+  <div id="gClip"><div id="gSpot"></div></div>
   <div class="gring" id="gRing"></div>
   <div class="ghand" id="gHand">&#9757;</div>
   <div class="gtip" id="gTip">
@@ -1485,9 +1492,8 @@ var GUIDE=[
 
 function gEls(){ return {
   ring:document.getElementById('gRing'), hand:document.getElementById('gHand'), tip:document.getElementById('gTip'),
-  dT:document.getElementById('dT'), dB:document.getElementById('dB'), dL:document.getElementById('dL'), dR:document.getElementById('dR')
+  clip:document.getElementById('gClip'), spot:document.getElementById('gSpot')
 }; }
-function setBox(el,x,y,w,h){ el.style.display='block'; el.style.left=x+'px'; el.style.top=y+'px'; el.style.width=Math.max(0,w)+'px'; el.style.height=Math.max(0,h)+'px'; }
 function screenRect(){ var sc=document.querySelector('.screen'); var r=sc.getBoundingClientRect(); return {x:r.left,y:r.top,w:r.width,h:r.height,r:r.left+r.width,b:r.top+r.height}; }
 function positionChrome(S){
   // skip button lives inside the tablet screen, never on the page
@@ -1501,22 +1507,25 @@ function positionGuide(s){
   if(!ringEl) return;
   var rr=ringEl.getBoundingClientRect();
   if(rr.width===0 && rr.height===0) return; // hidden mid-transition; hold last frame
-  // The "hole" (kept fully sharp, no blur) is the meaningful SECTION; ring points to the element inside it.
+  // The "hole" (kept fully sharp) is the meaningful SECTION; ring points to the element inside it.
   var holeEl=document.querySelector(s.hole||s.spot) || ringEl;
   var hr=holeEl.getBoundingClientRect();
   if(hr.width===0 && hr.height===0) hr=rr;
   var hp=6;
-  // clamp the hole to the screen; round to whole px + overlap panels 1px so no thin seam shows through
-  var Sx=Math.round(S.x), Sy=Math.round(S.y), Sr=Math.round(S.r), Sb=Math.round(S.b);
-  var hL=Math.round(Math.max(S.x, hr.left-hp)), hT=Math.round(Math.max(S.y, hr.top-hp)), hR=Math.round(Math.min(S.r, hr.right+hp)), hB=Math.round(Math.min(S.b, hr.bottom+hp));
-  var ov=1; // overlap so adjacent panels never leave a sub-pixel gap
-  setBox(e.dT, Sx, Sy, Sr-Sx, (hT-Sy)+ov);                 // full width, top band (bleeds 1px down)
-  setBox(e.dB, Sx, hB-ov, Sr-Sx, (Sb-hB)+ov);              // full width, bottom band (bleeds 1px up)
-  setBox(e.dL, Sx, hT, (hL-Sx)+ov, hB-hT);                 // left of hole (bleeds 1px right)
-  setBox(e.dR, hR-ov, hT, (Sr-hR)+ov, hB-hT);              // right of hole (bleeds 1px left)
-  // ring hugs the specific element
+  var hL=Math.max(S.x, hr.left-hp), hT=Math.max(S.y, hr.top-hp), hR=Math.min(S.r, hr.right+hp), hB=Math.min(S.b, hr.bottom+hp);
+  // clip container = the tablet screen (dim never spills outside). Only touch when it actually changes.
+  var clip=e.clip;
+  if(clip._x!==S.x||clip._w!==S.w){ clip.style.left=S.x+'px'; clip.style.top=S.y+'px'; clip.style.width=S.w+'px'; clip.style.height=S.h+'px'; clip._x=S.x; clip._w=S.w; }
+  clip.style.display='block';
+  // ONE dim surface with a soft hole, moved via GPU transform (buttery). coords are screen-local.
+  e.spot.style.display='block';
+  e.spot.style.transform='translate('+(hL-S.x)+'px,'+(hT-S.y)+'px)';
+  e.spot.style.width=(hR-hL)+'px'; e.spot.style.height=(hB-hT)+'px';
+  // orange ring hugs the specific element, also GPU-transform driven
   var rp=6, x=Math.max(S.x,rr.left-rp), y=Math.max(S.y,rr.top-rp), w=rr.width+2*rp, h=rr.height+2*rp;
-  setBox(e.ring,x,y,w,h);
+  e.ring.style.display='block';
+  e.ring.style.transform='translate('+x+'px,'+y+'px)';
+  e.ring.style.width=w+'px'; e.ring.style.height=h+'px';
   // tooltip: place on whichever side of the SECTION has room (below > above > right > left) WITHIN the screen
   var tw=e.tip.offsetWidth||218, th=e.tip.offsetHeight||160, m=16, gap=8, tx, ty, side;
   var clampX=function(v){ return Math.min(Math.max(S.x+10,v), S.r-tw-10); };
@@ -1535,7 +1544,7 @@ function positionGuide(s){
     else { tx=Math.max(hL-m-tw, S.x+10); ty=clampY(rr.top+rr.height/2-th/2); }
   }
   e.tip.style.left=tx+'px'; e.tip.style.top=ty+'px';
-  // hand hugs the ringed element, pointing from the tooltip toward it
+  // hand hugs the ringed element, pointing from the tooltip toward it (GPU transform)
   e.hand.style.display='block';
   var hchar, hlx, hly;
   if(side==='below'){ hchar='☝'; hlx=Math.min(x+w-10, S.r-40); hly=y+h+2; }
@@ -1543,14 +1552,14 @@ function positionGuide(s){
   else if(side==='right'){ hchar='👈'; hlx=x+w+4; hly=y+h/2-18; }
   else { hchar='👉'; hlx=x-40; hly=y+h/2-18; }
   if(e.hand.getAttribute('data-dir')!==hchar){ e.hand.innerHTML='<span>'+hchar+'</span>'; e.hand.setAttribute('data-dir',hchar); }
-  e.hand.style.left=hlx+'px'; e.hand.style.top=hly+'px';
+  e.hand.style.transform='translate('+hlx+'px,'+hly+'px)';
 }
 function guideTick(){ if(!guide.on) return; var s=GUIDE[guide.i]; if(s) positionGuide(s); requestAnimationFrame(guideTick); }
 function startGuide(){
   gClear(); guide.on=true; guide.i=0;
   autoPlay=true; if(idleT){ clearTimeout(idleT); idleT=null; }
   document.getElementById('gEnd').classList.remove('show');
-  ['dT','dB','dL','dR','gRing','gHand','gTip'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display=''; });
+  ['gClip','gSpot','gRing','gHand','gTip'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display=''; });
   document.getElementById('gSkip').style.display='';
   document.getElementById('guide').classList.add('on');
   showGuideStep();
@@ -1591,7 +1600,7 @@ function sizeEndToScreen(){
 function finishGuide(){
   gClear();
   // hide the spotlight chrome so only the end card shows, inside the tablet
-  ['dT','dB','dL','dR','gRing','gHand','gTip','gSkip'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
+  ['gClip','gSpot','gRing','gHand','gTip','gSkip'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
   sizeEndToScreen();
   document.getElementById('gEnd').classList.add('show');
   guide.on=false;
