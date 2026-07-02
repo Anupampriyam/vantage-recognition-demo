@@ -487,7 +487,7 @@ body.guiding .overlay{background:transparent;backdrop-filter:none;-webkit-backdr
   will-change:transform,width,height}
 .gring::after{content:'';position:absolute;inset:-2px;border-radius:14px;box-shadow:0 0 26px rgba(255,109,5,.35);animation:gpulse 2.4s ease-in-out infinite}
 @keyframes gpulse{0%,100%{opacity:.55}50%{opacity:1}}
-.ghand{position:fixed;left:0;top:0;font-size:32px;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));z-index:5;transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .3s ease}
+.ghand{position:fixed;left:0;top:0;font-size:32px;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));z-index:6;transition:transform .6s cubic-bezier(.22,1,.36,1),opacity .3s ease}
 .ghand span{display:inline-block;animation:hbob 1.4s cubic-bezier(.45,0,.55,1) infinite}
 @keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
 .gtip{position:fixed;width:222px;background:linear-gradient(155deg,#3a3a66,#26264a);border:1px solid rgba(255,140,60,.5);border-radius:18px;box-shadow:0 24px 60px -16px rgba(6,8,22,.75),0 0 0 1px rgba(255,255,255,.04) inset,0 0 34px -8px rgba(255,109,5,.35);padding:16px 17px;pointer-events:auto;z-index:5;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1)}
@@ -1380,7 +1380,7 @@ function scheduleAuto(){
   if(autoT){ clearTimeout(autoT); autoT=null; }
   if(!autoPlay || !guide.on) return;
   var s=GUIDE[guide.i]; if(!s) return;
-  var ms = s.auto ? RESULT_MS : STEP_MS; // result/reveal pages linger longer
+  var ms = s.hold ? s.hold : (s.auto ? RESULT_MS : STEP_MS); // hold = explicit dwell (e.g. a longer first beat)
   autoT=setTimeout(function(){
     if(!autoPlay || !guide.on) return;
     var cur=GUIDE[guide.i];
@@ -1420,8 +1420,8 @@ function scene(view){ closeRecognize(); switchView(view, nav({feed:0,rewards:2,m
 
 var GUIDE=[
   { setup:function(){ closeRecognize(); FEED=[]; renderFeed(); setPoints(4750); lbState='recog'; document.getElementById('myRankNum').textContent='47'; switchView('feed',nav(0)); topScroll(); },
-    spot:'.recognize-btn', click:'.recognize-btn',
-    eye:'Recognize', h:'Recognize a teammate', s:'Great work should never go unseen. Start right here.', do:'Tap Recognize' },
+    spot:'.recognize-btn', click:'.recognize-btn', hold:5000,
+    eye:'Recognize', h:'Recognize a teammate', s:'Great work should never go unseen. Tap Recognize, or watch it play.', do:'Tap Recognize' },
 
   { setup:sceneType, hole:'.modal', spot:'#ms-type .type-card', click:'#ms-type .type-card',
     eye:'Recognize', h:'Send an appreciation', s:'A non-monetary badge tied to a company value. No budget needed.', do:'Tap Appreciate' },
@@ -1529,11 +1529,12 @@ function positionGuide(s){
   e.ring.style.transform='translate('+x+'px,'+y+'px)';
   e.ring.style.width=w+'px'; e.ring.style.height=h+'px';
   // tooltip: place on whichever side of the SECTION has room (below > above > right > left) WITHIN the screen
-  var tw=e.tip.offsetWidth||218, th=e.tip.offsetHeight||160, m=16, gap=8, tx, ty, side;
+  var tw=e.tip.offsetWidth||218, th=e.tip.offsetHeight||160, m=46, mV=48, gap=8, tx, ty, side;
   var clampX=function(v){ return Math.min(Math.max(S.x+10,v), S.r-tw-10); };
   var clampY=function(v){ return Math.min(Math.max(S.y+10,v), S.b-th-10); };
-  if(hB+m+th <= S.b-gap){ side='below'; ty=hB+m; tx=clampX(rr.left-10); }
-  else if(hT-m-th >= S.y+gap){ side='above'; ty=hT-m-th; tx=clampX(rr.left-10); }
+  // below/above stack the hand between element and bubble, so leave mV of vertical room for it
+  if(hB+mV+th <= S.b-gap){ side='below'; ty=hB+mV; tx=clampX(rr.left-10); }
+  else if(hT-mV-th >= S.y+gap){ side='above'; ty=hT-mV-th; tx=clampX(rr.left-10); }
   else if(hR+m+tw <= S.r-gap){ side='right'; tx=hR+m; ty=clampY(rr.top+rr.height/2-th/2); }
   else if(hL-m-tw >= S.x+gap){ side='left'; tx=hL-m-tw; ty=clampY(rr.top+rr.height/2-th/2); }
   else {
