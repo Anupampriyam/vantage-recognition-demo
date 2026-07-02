@@ -496,15 +496,14 @@ a{color:inherit;text-decoration:none}
 #gSkip:hover{background:rgba(20,22,42,.92)}
 #gEnd{position:fixed;inset:0;z-index:7;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(120% 120% at 50% 30%,rgba(41,41,76,.95),rgba(16,18,36,.97));color:#fff;pointer-events:auto;padding:24px}
 #gEnd.show{display:flex;animation:fade .4s ease}
+#gEnd .ge-mark{font-size:52px;margin-bottom:6px;animation:titlepop .6s ease}
 #gEnd .ge-h{font-size:clamp(24px,4vw,36px);font-weight:900}
-#gEnd .ge-s{font-size:15.5px;color:#cdd0e0;margin-top:10px;max-width:440px}
-#gEnd .ge-row{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;justify-content:center}
-#gEnd .ge-replay{background:rgba(255,255,255,.14);color:#fff;font-weight:900;font-size:14px;border-radius:50px;padding:12px 24px;border:1px solid rgba(255,255,255,.28)}
-#gEnd .ge-replay:hover{background:rgba(255,255,255,.24)}
-#gEnd .ge-explore{background:var(--accent);color:#fff;font-weight:900;font-size:14px;border-radius:50px;padding:12px 26px}
+#gEnd .ge-s{font-size:15.5px;color:#cdd0e0;margin-top:10px;max-width:460px;line-height:1.5}
+#gEnd .ge-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;justify-content:center}
+#gEnd .ge-explore{background:var(--accent);color:#fff;font-weight:900;font-size:15px;border-radius:50px;padding:13px 30px}
 #gEnd .ge-explore:hover{background:var(--accent-600)}
-.gfab{position:fixed;bottom:16px;right:16px;z-index:460;background:var(--brand);color:#fff;font-weight:900;font-size:12.5px;border-radius:50px;padding:10px 17px;box-shadow:0 10px 22px -6px rgba(41,41,76,.55);display:flex;align-items:center;gap:7px}
-.gfab:hover{background:var(--brand-600)}
+#gEnd .ge-cta{margin-top:16px;color:#cdd0e0;font-weight:700;font-size:13px;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px}
+#gEnd .ge-cta:hover{color:#fff}
 
 /* points pill is now a button */
 .points-pill{cursor:pointer;transition:background .13s,transform .13s}
@@ -848,20 +847,17 @@ a{color:inherit;text-decoration:none}
       <button class="gt-nx" id="gNx" style="display:none" onclick="guideNext()">Next &rsaquo;</button>
     </div>
   </div>
-  <button id="gSkip" onclick="endGuide()">Skip tour</button>
+  <button id="gSkip" onclick="finishGuide()">Skip to end</button>
   <div id="gEnd">
-    <div class="ge-h">That is Vantage Recognition.</div>
-    <div class="ge-s">Recognize great work, reward it, celebrate the wins.</div>
+    <div class="ge-mark">&#127881;</div>
+    <div class="ge-h">Thanks for watching.</div>
+    <div class="ge-s">That is Vantage Recognition: recognize great work, reward it, and celebrate the wins that build culture.</div>
     <div class="ge-row">
-      <button class="ge-replay" onclick="startGuide()">&#8635; Replay</button>
-      <button class="ge-explore" onclick="endGuide()">Explore on my own</button>
+      <button class="ge-explore" onclick="startGuide()">&#8635; Retry the demo</button>
     </div>
+    <a class="ge-cta" href="mailto:anupam.borah@vantagecircle.com?subject=Vantage%20Recognition%20walkthrough">Book a live walkthrough</a>
   </div>
 </div>
-<button class="gfab" id="gfab" onclick="startGuide()" style="display:none">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
-  Take the tour
-</button>
 
 <script>
 var POINTS_PER_DOLLAR = 1; /* 1 Vantage Point = $1 */
@@ -1197,6 +1193,7 @@ function renderCompose(){
   var vt=document.getElementById('valueTags'); vt.innerHTML='';
   VALUES.forEach(function(v){
     var b=document.createElement('button'); b.className='vtag'+(state.value===v?' sel':''); b.textContent=v;
+    b.setAttribute('data-v', v.replace('#',''));
     b.onclick=function(){ state.value = state.value===v?null:v; renderCompose(); };
     vt.appendChild(b);
   });
@@ -1380,57 +1377,72 @@ function topScroll(){ var s=document.querySelector('.scroll'); if(s) s.scrollTop
 var GUIDE=[
   { setup:function(){ closeRecognize(); FEED=[]; renderFeed(); setPoints(4750); lbState='recog'; document.getElementById('myRankNum').textContent='47'; switchView('feed',nav(0)); topScroll(); },
     spot:'.recognize-btn', click:'.recognize-btn',
-    eye:'Step 1 of 8 &middot; Recognize', h:'Recognize a teammate', s:'Great work should never go unseen. Start right here.', do:'Tap Recognize' },
+    eye:'Recognize', h:'Recognize a teammate', s:'Great work should never go unseen. Start right here.', do:'Tap Recognize' },
 
   { hole:'.modal', spot:'#ms-type .type-card', click:'#ms-type .type-card',
-    eye:'Step 2 of 8 &middot; Recognize', h:'Send an appreciation', s:'A non-monetary badge tied to a company value. No budget needed.', do:'Tap Appreciate' },
+    eye:'Recognize', h:'Send an appreciation', s:'A non-monetary badge tied to a company value. No budget needed.', do:'Tap Appreciate' },
 
   { hole:'.modal', spot:'#peopleList .person', click:'#peopleList .person', after:function(){ gAfter(modalNext,60); }, delay:210,
-    eye:'Step 3 of 8 &middot; Recognize', h:'Pick who to celebrate', s:'Anyone, any team. Recognition flows in every direction.', do:'Choose Maria Chen' },
+    eye:'Recognize', h:'Pick who to celebrate', s:'Anyone, any team. Recognition flows in every direction.', do:'Choose Maria Chen' },
 
   { hole:'.modal', spot:'#badgeGrid .bopt', click:'#badgeGrid .bopt', after:function(){ gAfter(modalNext,60); }, delay:210,
-    eye:'Step 4 of 8 &middot; Recognize', h:'Choose the value', s:'Recognition tied to behaviour is what actually shapes culture.', do:'Pick a badge' },
+    eye:'Recognize', h:'Choose the badge', s:'Pick Agility Ace for how Maria kept the team moving.', do:'Pick a badge' },
+
+  { hole:'.modal', spot:'#valueTags .vtag[data-v="Agile"]', click:'#valueTags .vtag[data-v="Agile"]', delay:260,
+    eye:'Recognize', h:'Align it to a company value', s:'Tag #Agile so the recognition reinforces the behaviour your company cares about.', do:'Tag #Agile' },
 
   { setup:function(){ document.getElementById('recogMsg').value=''; },
-    hole:'.modal', spot:'#advisorBtn', click:'#advisorBtn', delay:1000,
-    eye:'Step 5 of 8 &middot; Recognize', h:'Let AI write it', s:'Stuck for words? The AI Advisor drafts a personal message in a click.', do:'Tap AI Advisor' },
+    hole:'.modal', spot:'#advisorBtn', click:'#advisorBtn', delay:1050,
+    eye:'Recognize', h:'Let AI write it', s:'Stuck for words? The AI Advisor drafts a personal message in a click.', do:'Tap AI Advisor' },
 
-  { hole:'.modal', spot:'#footNext', click:'#footNext', delay:300,
-    eye:'Step 5 of 8 &middot; Recognize', h:'Make it public', s:'One tap and it is live for the whole company to see and celebrate.', do:'Tap Appreciate' },
+  { hole:'.modal', spot:'#footNext', click:'#footNext', delay:320,
+    eye:'Recognize', h:'Make it public', s:'One tap and it is live for the whole company to see and celebrate.', do:'Tap Appreciate' },
 
-  { setup:function(){ topScroll(); }, spot:'.feed .card:not(.ghost)', auto:2600, scroll:true,
-    eye:'Recognized', h:'It is live in the feed', s:'Public, on-brand, tied to a value. This is how culture becomes visible.' },
+  { setup:function(){ topScroll(); }, spot:'.feed .card:not(.ghost)', auto:4800, scroll:true,
+    eye:'Recognized', h:'It is live in the feed', s:'Public, on-brand, and tied to the Agile value. This is how culture becomes visible to everyone.' },
+
+  { hole:'.feed .card:not(.ghost)', spot:'.feed .card:not(.ghost) .card-actions .act', click:'.feed .card:not(.ghost) .card-actions .act', delay:500,
+    eye:'Engage', h:'Cheer it on', s:'A like is a tiny signal that means a lot. Show Maria some love.', do:'Tap Like' },
+
+  { hole:'.feed .card:not(.ghost)', spot:'.feed .card:not(.ghost) .smart-btn', click:'.feed .card:not(.ghost) .smart-btn', delay:500,
+    eye:'Engage', h:'Comment with AI', s:'No time to type? Smart Comment writes a thoughtful reply for you.', do:'Tap Smart Comment' },
+
+  { hole:'.feed .card:not(.ghost)', spot:'#tones-0 .tone', click:'#tones-0 .tone', delay:1050,
+    eye:'Engage', h:'Pick a tone', s:'Appreciative, funny, or formal. AI matches the vibe you want.', do:'Choose a tone' },
+
+  { hole:'.feed .card:not(.ghost)', spot:'#send-0', click:'#send-0', delay:600,
+    eye:'Engage', h:'Post your comment', s:'Written by AI, sent by you. Engagement in seconds.', do:'Tap Post' },
 
   { spot:'#pointsPill', click:'#pointsPill',
-    eye:'Step 6 of 8 &middot; Reward', h:'Now spend those points', s:'Recognition earns points. Tap your balance to open Rewards.', do:'Tap your points' },
+    eye:'Reward', h:'Now spend those points', s:'Recognition earns points. Tap your balance to open Rewards.', do:'Tap your points' },
 
-  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, hole:'#view-rewards', spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:340,
-    eye:'Step 6 of 8 &middot; Reward', h:'Redeem a gift card', s:'A global catalog of top brands, all in view. 1 point = $1.', do:'Redeem Amazon $50' },
+  { setup:function(){ switchRw('giftcards',rwTab(0)); topScroll(); }, hole:'#view-rewards', spot:'#gcGrid .gc:first-child .gc-redeem', click:'#gcGrid .gc:first-child .gc-redeem', scroll:true, delay:360,
+    eye:'Reward', h:'Redeem a gift card', s:'A global catalog of top brands, all in view. 1 point = $1.', do:'Redeem Amazon $50' },
 
   { hole:'#view-rewards', spot:'.rw-tab:nth-child(2)', click:'.rw-tab:nth-child(2)',
-    eye:'Step 7 of 8 &middot; Amazon store', h:'Or shop Amazon directly', s:'10M+ products, the whole store, checkout with points.', do:'Open Amazon Store' },
+    eye:'Amazon store', h:'Or shop Amazon directly', s:'10M+ products, the whole store, checkout with points.', do:'Open Amazon Store' },
 
-  { setup:function(){ topScroll(); }, hole:'#view-rewards', spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:380,
-    eye:'Step 7 of 8 &middot; Amazon store', h:'Buy it with points', s:'The reward lands the same day. No cash, no admin.', do:'Buy with points' },
+  { setup:function(){ topScroll(); }, hole:'#view-rewards', spot:'#amzGrid .prod:first-child .prod-buy', click:'#amzGrid .prod:first-child .prod-buy', scroll:true, delay:400,
+    eye:'Amazon store', h:'Buy it with points', s:'The reward lands the same day. No cash, no admin.', do:'Buy with points' },
 
   { spot:'#navMilestones', click:'#navMilestones',
-    eye:'Step 8 of 8 &middot; Milestones', h:'Celebrate the journey', s:'Every service anniversary, handled automatically.', do:'Open Milestones' },
+    eye:'Milestones', h:'Celebrate the journey', s:'Every service anniversary, handled automatically.', do:'Open Milestones' },
 
-  { setup:function(){ topScroll(); fireConfetti(); }, spot:'#mfeed .mfpost:first-child', auto:3000, scroll:true,
-    eye:'Milestone', h:'You just completed 3 years', s:'Work anniversaries celebrated for you, and everyone joins in.' },
+  { setup:function(){ topScroll(); fireConfetti(); }, spot:'#mfeed .mfpost:first-child', auto:6500, scroll:true,
+    eye:'Milestone', h:'You just completed 3 years', s:'Work anniversaries are celebrated for you, and everyone joins in to make the day feel special. Take a moment, this one is yours.' },
 
   { setup:function(){ lbState='story'; renderLeaderboard(); document.getElementById('myRankNum').textContent='1'; },
     spot:'#navLeaderboard', click:'#navLeaderboard',
     eye:'The payoff', h:'See where you rank', s:'Recognition adds up across the year.', do:'Open Leaderboard' },
 
-  { setup:function(){ topScroll(); fireConfetti(); }, spot:'.pod.first', auto:3200, scroll:true,
-    eye:'Leaderboard', h:'You are #1 this month', s:'Consistent recognition puts your impact right at the top.' },
+  { setup:function(){ topScroll(); fireConfetti(); }, spot:'.pod.first', auto:6500, scroll:true,
+    eye:'Leaderboard', h:'You are #1 this month', s:'Consistent recognition puts your impact right at the top of the leaderboard, in front of the whole company.' },
 
-  { setup:function(){ switchView('feed',nav(0)); topScroll(); }, hole:'.feed-rail', spot:'.pfc-values', auto:3000, scroll:true,
-    eye:'Profile badging', h:'You keep living the Agile value', s:'Recognition after recognition, Agile is your standout strength.' },
+  { setup:function(){ switchView('feed',nav(0)); topScroll(); }, hole:'.feed-rail', spot:'.pfc-values', auto:6500, scroll:true,
+    eye:'Profile badging', h:'You keep living the Agile value', s:'Recognition after recognition, Agile is your standout strength. Your profile tracks the values you are known for.' },
 
-  { setup:function(){ earnAgileBadge(); fireConfetti(); }, hole:'.feed-rail', spot:'#pfTitle', auto:3600, scroll:true,
-    eye:'New profile badge', h:'Top Agile Expert, unlocked', s:'Earn achievement titles on your profile just by how you show up.' }
+  { setup:function(){ earnAgileBadge(); fireConfetti(); }, hole:'.feed-rail', spot:'#pfTitle', auto:7000, scroll:true,
+    eye:'New profile badge', h:'Top Agile Expert, unlocked', s:'Because you keep getting recognized for Agile, you earn the Top Agile Expert title on your profile. Achievement badges you earn just by how you show up.' }
 ];
 
 function gEls(){ return {
@@ -1481,7 +1493,6 @@ function guideTick(){ if(!guide.on) return; var s=GUIDE[guide.i]; if(s) position
 function updateGProg(){ document.getElementById('gProg').style.width = Math.round(guide.i/GUIDE.length*100)+'%'; }
 function startGuide(){
   gClear(); guide.on=true; guide.i=0;
-  document.getElementById('gfab').style.display='none';
   document.getElementById('gEnd').classList.remove('show');
   document.getElementById('guide').classList.add('on');
   showGuideStep();
@@ -1506,13 +1517,6 @@ function finishGuide(){
   document.getElementById('gProg').style.width='100%';
   document.getElementById('gEnd').classList.add('show');
   guide.on=false;
-}
-function endGuide(){
-  gClear(); guide.on=false;
-  document.getElementById('guide').classList.remove('on');
-  document.getElementById('gEnd').classList.remove('show');
-  document.getElementById('gProg').style.width='0';
-  document.getElementById('gfab').style.display='flex';
 }
 /* advance when the user clicks the highlighted target */
 document.addEventListener('click',function(e){
