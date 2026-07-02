@@ -1435,7 +1435,7 @@ var GUIDE=[
     spot:'#navLeaderboard', click:'#navLeaderboard',
     eye:'The payoff', h:'See where you rank', s:'Recognition adds up across the year.', do:'Open Leaderboard' },
 
-  { setup:function(){ topScroll(); fireConfetti(); }, spot:'.pod.first', auto:6500, scroll:true,
+  { setup:function(){ topScroll(); fireConfetti(); }, hole:'#view-leaderboard', spot:'.pod.first', auto:6500, scroll:true,
     eye:'Leaderboard', h:'You are #1 this month', s:'Consistent recognition puts your impact right at the top of the leaderboard, in front of the whole company.' },
 
   { setup:function(){ switchView('feed',nav(0)); topScroll(); }, hole:'.feed-rail', spot:'.pfc-values', auto:6500, scroll:true,
@@ -1450,8 +1450,17 @@ function gEls(){ return {
   dT:document.getElementById('dT'), dB:document.getElementById('dB'), dL:document.getElementById('dL'), dR:document.getElementById('dR')
 }; }
 function setBox(el,x,y,w,h){ el.style.display='block'; el.style.left=x+'px'; el.style.top=y+'px'; el.style.width=Math.max(0,w)+'px'; el.style.height=Math.max(0,h)+'px'; }
+function screenRect(){ var sc=document.querySelector('.screen'); var r=sc.getBoundingClientRect(); return {x:r.left,y:r.top,w:r.width,h:r.height,r:r.left+r.width,b:r.top+r.height}; }
+function positionChrome(S){
+  // progress bar + skip button live inside the tablet screen, never on the page
+  var gp=document.getElementById('gProg');
+  gp.style.left=S.x+'px'; gp.style.top=S.y+'px'; gp.style.width=(S.w*(guide.frac||0))+'px';
+  var sk=document.getElementById('gSkip');
+  if(sk){ sk.style.left=(S.r-(sk.offsetWidth||90)-12)+'px'; sk.style.top=(S.y+12)+'px'; sk.style.right='auto'; }
+}
 function positionGuide(s){
-  var e=gEls(), vw=window.innerWidth, vh=window.innerHeight;
+  var e=gEls(), S=screenRect();
+  positionChrome(S);
   var ringEl=document.querySelector(s.spot);
   if(!ringEl) return;
   var rr=ringEl.getBoundingClientRect();
@@ -1460,37 +1469,39 @@ function positionGuide(s){
   var holeEl=document.querySelector(s.hole||s.spot) || ringEl;
   var hr=holeEl.getBoundingClientRect();
   if(hr.width===0 && hr.height===0) hr=rr;
-  var hp=6, hx=Math.max(0,hr.left-hp), hy=Math.max(0,hr.top-hp), hw=hr.width+2*hp, hh=hr.height+2*hp;
-  setBox(e.dT,0,0,vw,hy);
-  setBox(e.dB,0,hy+hh,vw,vh-(hy+hh));
-  setBox(e.dL,0,hy,hx,hh);
-  setBox(e.dR,hx+hw,hy,vw-(hx+hw),hh);
+  var hp=6;
+  // clamp the hole to the screen so the dim/blur never spills outside the tablet
+  var hL=Math.max(S.x, hr.left-hp), hT=Math.max(S.y, hr.top-hp), hR=Math.min(S.r, hr.right+hp), hB=Math.min(S.b, hr.bottom+hp);
+  var hHt=Math.max(0,hB-hT);
+  setBox(e.dT, S.x, S.y, S.w, hT-S.y);
+  setBox(e.dB, S.x, hB, S.w, S.b-hB);
+  setBox(e.dL, S.x, hT, hL-S.x, hHt);
+  setBox(e.dR, hR, hT, S.r-hR, hHt);
   // ring hugs the specific element
-  var rp=6, x=Math.max(0,rr.left-rp), y=Math.max(0,rr.top-rp), w=rr.width+2*rp, h=rr.height+2*rp;
+  var rp=6, x=Math.max(S.x,rr.left-rp), y=Math.max(S.y,rr.top-rp), w=rr.width+2*rp, h=rr.height+2*rp;
   setBox(e.ring,x,y,w,h);
-  // tooltip: place on whichever side of the SECTION has room (below > above > right > left),
-  // so it never overlaps the highlighted button or the sharp content.
-  var tw=290, th=e.tip.offsetHeight||160, m=18, gap=8, tx, ty, side;
-  var clampX=function(v){ return Math.min(Math.max(12,v), vw-tw-12); };
-  var clampY=function(v){ return Math.min(Math.max(12,v), vh-th-12); };
-  if(hy+hh+m+th <= vh-gap){ side='below'; ty=hy+hh+m; tx=clampX(rr.left-10); }
-  else if(hy-m-th >= gap){ side='above'; ty=hy-m-th; tx=clampX(rr.left-10); }
-  else if(hx+hw+m+tw <= vw-gap){ side='right'; tx=hx+hw+m; ty=clampY(rr.top+rr.height/2-th/2); }
-  else if(hx-m-tw >= gap){ side='left'; tx=hx-m-tw; ty=clampY(rr.top+rr.height/2-th/2); }
-  else { side='below'; ty=clampY(hy+hh+m); tx=clampX(rr.left-10); }
+  // tooltip: place on whichever side of the SECTION has room (below > above > right > left) WITHIN the screen
+  var tw=290, th=e.tip.offsetHeight||160, m=18, gap=10, tx, ty, side;
+  var clampX=function(v){ return Math.min(Math.max(S.x+10,v), S.r-tw-10); };
+  var clampY=function(v){ return Math.min(Math.max(S.y+10,v), S.b-th-10); };
+  if(hB+m+th <= S.b-gap){ side='below'; ty=hB+m; tx=clampX(rr.left-10); }
+  else if(hT-m-th >= S.y+gap){ side='above'; ty=hT-m-th; tx=clampX(rr.left-10); }
+  else if(hR+m+tw <= S.r-gap){ side='right'; tx=hR+m; ty=clampY(rr.top+rr.height/2-th/2); }
+  else if(hL-m-tw >= S.x+gap){ side='left'; tx=hL-m-tw; ty=clampY(rr.top+rr.height/2-th/2); }
+  else { side='below'; ty=clampY(hB+m); tx=clampX(rr.left-10); }
   e.tip.style.left=tx+'px'; e.tip.style.top=ty+'px';
   // hand hugs the ringed element, pointing from the tooltip toward it
   e.hand.style.display='block';
   var hchar, hlx, hly;
-  if(side==='below'){ hchar='☝'; hlx=Math.min(x+w-10, vw-40); hly=y+h+2; }
-  else if(side==='above'){ hchar='👇'; hlx=Math.min(x+w-10, vw-40); hly=y-40; }
+  if(side==='below'){ hchar='☝'; hlx=Math.min(x+w-10, S.r-40); hly=y+h+2; }
+  else if(side==='above'){ hchar='👇'; hlx=Math.min(x+w-10, S.r-40); hly=y-40; }
   else if(side==='right'){ hchar='👈'; hlx=x+w+4; hly=y+h/2-18; }
   else { hchar='👉'; hlx=x-40; hly=y+h/2-18; }
   if(e.hand.getAttribute('data-dir')!==hchar){ e.hand.innerHTML='<span>'+hchar+'</span>'; e.hand.setAttribute('data-dir',hchar); }
   e.hand.style.left=hlx+'px'; e.hand.style.top=hly+'px';
 }
 function guideTick(){ if(!guide.on) return; var s=GUIDE[guide.i]; if(s) positionGuide(s); requestAnimationFrame(guideTick); }
-function updateGProg(){ document.getElementById('gProg').style.width = Math.round(guide.i/GUIDE.length*100)+'%'; }
+function updateGProg(){ guide.frac = guide.i/GUIDE.length; }
 function startGuide(){
   gClear(); guide.on=true; guide.i=0;
   document.getElementById('gEnd').classList.remove('show');
