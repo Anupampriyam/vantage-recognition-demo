@@ -197,6 +197,8 @@ a{color:inherit;text-decoration:none}
 
 /* modal */
 .overlay{position:fixed;inset:0;background:rgba(20,28,46,.6);backdrop-filter:blur(3px);z-index:100;display:none;align-items:center;justify-content:center;padding:18px}
+/* during the guided tour the spotlight provides the dim; drop the modal's own backdrop so no dark band shows around it */
+body.guiding .overlay{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none}
 .overlay.show{display:flex;animation:fade .2s ease}
 .modal{background:#fff;border-radius:18px;width:100%;max-width:540px;max-height:92vh;overflow:hidden;box-shadow:var(--shadow-lg);display:flex;flex-direction:column}
 .modal-head{display:flex;align-items:center;gap:12px;padding:18px 22px;border-bottom:1px solid var(--border)}
@@ -1562,6 +1564,7 @@ function startGuide(){
   ['gClip','gSpot','gRing','gHand','gTip'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display=''; });
   document.getElementById('gSkip').style.display='';
   document.getElementById('guide').classList.add('on');
+  document.body.classList.add('guiding');
   showGuideStep();
   requestAnimationFrame(guideTick);
 }
@@ -1599,6 +1602,7 @@ function sizeEndToScreen(){
 }
 function finishGuide(){
   gClear();
+  document.body.classList.remove('guiding');
   // hide the spotlight chrome so only the end card shows, inside the tablet
   ['gClip','gSpot','gRing','gHand','gTip','gSkip'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display='none'; });
   sizeEndToScreen();
