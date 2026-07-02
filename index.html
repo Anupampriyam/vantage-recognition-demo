@@ -474,14 +474,16 @@ a{color:inherit;text-decoration:none}
 #guide{position:fixed;inset:0;z-index:500;display:none;font-family:'Lato',sans-serif;pointer-events:none}
 #guide.on{display:block}
 /* four dim+blur panels leave a sharp hole around the active element (video-like blurred backdrop) */
-/* --ease drives the smooth "spotlight glides between steps" motion */
-.gdim{position:fixed;background:rgba(20,22,42,.42);backdrop-filter:blur(3.5px);-webkit-backdrop-filter:blur(3.5px);pointer-events:auto;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1),width .55s cubic-bezier(.6,.02,.2,1),height .55s cubic-bezier(.6,.02,.2,1)}
-.gring{position:fixed;border:2.5px solid var(--accent);border-radius:12px;box-shadow:0 0 0 5px rgba(255,109,5,.25),0 0 26px rgba(255,109,5,.35);pointer-events:none;animation:gpulse 1.6s ease-in-out infinite;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1),width .55s cubic-bezier(.6,.02,.2,1),height .55s cubic-bezier(.6,.02,.2,1)}
-@keyframes gpulse{0%,100%{box-shadow:0 0 0 5px rgba(255,109,5,.25),0 0 22px rgba(255,109,5,.3)}50%{box-shadow:0 0 0 8px rgba(255,109,5,.14),0 0 30px rgba(255,109,5,.45)}}
-.ghand{position:fixed;font-size:34px;pointer-events:none;filter:drop-shadow(0 4px 5px rgba(0,0,0,.35));z-index:5;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1)}
-.ghand span{display:inline-block;animation:hbob 1s ease-in-out infinite}
-@keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
-.gtip{position:fixed;width:218px;background:linear-gradient(160deg,#33335e,#29294C);border:1.5px solid rgba(255,109,5,.55);border-radius:16px;box-shadow:0 18px 44px -10px rgba(8,10,26,.7),0 0 0 4px rgba(255,109,5,.12);padding:15px 16px;pointer-events:auto;z-index:5;transition:left .55s cubic-bezier(.6,.02,.2,1),top .55s cubic-bezier(.6,.02,.2,1)}
+/* premium glide: easeOutExpo, quick start into a soft settle */
+.gdim{position:fixed;background:rgba(17,19,38,.5);backdrop-filter:blur(4px) saturate(1.05);-webkit-backdrop-filter:blur(4px) saturate(1.05);pointer-events:auto;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1),width .6s cubic-bezier(.16,1,.3,1),height .6s cubic-bezier(.16,1,.3,1)}
+.gring{position:fixed;border:2px solid var(--accent);border-radius:14px;box-shadow:0 0 0 4px rgba(255,109,5,.22),0 0 22px rgba(255,109,5,.35),inset 0 0 12px rgba(255,109,5,.12);pointer-events:none;animation:gpulse 2s ease-in-out infinite;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1),width .6s cubic-bezier(.16,1,.3,1),height .6s cubic-bezier(.16,1,.3,1)}
+@keyframes gpulse{0%,100%{box-shadow:0 0 0 4px rgba(255,109,5,.2),0 0 18px rgba(255,109,5,.3),inset 0 0 12px rgba(255,109,5,.1)}50%{box-shadow:0 0 0 7px rgba(255,109,5,.1),0 0 34px rgba(255,109,5,.5),inset 0 0 16px rgba(255,109,5,.16)}}
+.ghand{position:fixed;font-size:32px;pointer-events:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));z-index:5;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1),opacity .3s ease}
+.ghand span{display:inline-block;animation:hbob 1.4s cubic-bezier(.45,0,.55,1) infinite}
+@keyframes hbob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.gtip{position:fixed;width:222px;background:linear-gradient(155deg,#3a3a66,#26264a);border:1px solid rgba(255,140,60,.5);border-radius:18px;box-shadow:0 24px 60px -16px rgba(6,8,22,.75),0 0 0 1px rgba(255,255,255,.04) inset,0 0 34px -8px rgba(255,109,5,.35);padding:16px 17px;pointer-events:auto;z-index:5;transition:left .6s cubic-bezier(.16,1,.3,1),top .6s cubic-bezier(.16,1,.3,1)}
+.gtip.enter{animation:gtipIn .5s cubic-bezier(.16,1,.3,1)}
+@keyframes gtipIn{0%{opacity:0;transform:translateY(8px) scale(.96)}100%{opacity:1;transform:none}}
 .gtip .gt-eye{font-size:11px;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#ff8f4d}
 .gtip .gt-h{font-size:16px;font-weight:900;color:#fff;line-height:1.22;margin-top:4px}
 .gtip .gt-s{font-size:12.5px;color:#cdd0e0;font-weight:400;line-height:1.45;margin-top:5px}
@@ -1565,6 +1567,8 @@ function showGuideStep(){
   else { doEl.style.display='inline-flex'; doEl.textContent=s.do||'Tap the highlight'; }
   // prev/next arrows: disable prev on first step
   document.getElementById('gPrev').disabled = (guide.i===0);
+  // premium "present" animation on the caption each step
+  var tip=document.getElementById('gTip'); tip.classList.remove('enter'); void tip.offsetWidth; tip.classList.add('enter');
   if(s.scroll){ var el=document.querySelector(s.spot); if(el) el.scrollIntoView({block:'center'}); }
   positionGuide(s);
   scheduleAuto(); // video-mode: auto-advance this step (unless the user has taken over)
