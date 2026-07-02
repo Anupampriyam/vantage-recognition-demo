@@ -501,11 +501,11 @@ a{color:inherit;text-decoration:none}
 #gEnd .ge-mark{font-size:52px;margin-bottom:6px;animation:titlepop .6s ease}
 #gEnd .ge-h{font-size:clamp(24px,4vw,36px);font-weight:900}
 #gEnd .ge-s{font-size:15.5px;color:#cdd0e0;margin-top:10px;max-width:460px;line-height:1.5}
-#gEnd .ge-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;justify-content:center}
-#gEnd .ge-explore{background:var(--accent);color:#fff;font-weight:900;font-size:15px;border-radius:50px;padding:13px 30px}
-#gEnd .ge-explore:hover{background:var(--accent-600)}
-#gEnd .ge-cta{margin-top:16px;color:#cdd0e0;font-weight:700;font-size:13px;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px}
-#gEnd .ge-cta:hover{color:#fff}
+#gEnd .ge-row{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;justify-content:center;align-items:center}
+#gEnd .ge-cta{background:var(--accent);color:#fff;font-weight:900;font-size:15px;border-radius:50px;padding:14px 32px;box-shadow:0 10px 24px -6px rgba(255,109,5,.5)}
+#gEnd .ge-cta:hover{background:var(--accent-600);transform:translateY(-1px)}
+#gEnd .ge-retry{background:transparent;color:#cdd0e0;font-weight:700;font-size:14px;border:1px solid rgba(255,255,255,.35);border-radius:50px;padding:13px 24px}
+#gEnd .ge-retry:hover{background:rgba(255,255,255,.12);color:#fff}
 
 /* points pill is now a button */
 .points-pill{cursor:pointer;transition:background .13s,transform .13s}
@@ -855,9 +855,9 @@ a{color:inherit;text-decoration:none}
     <div class="ge-h">Thanks for watching.</div>
     <div class="ge-s">That is Vantage Recognition: recognize great work, reward it, and celebrate the wins that build culture.</div>
     <div class="ge-row">
-      <button class="ge-explore" onclick="startGuide()">&#8635; Retry the demo</button>
+      <a class="ge-cta" href="mailto:anupam.borah@vantagecircle.com?subject=Vantage%20Recognition%20walkthrough">Book a live walkthrough &rarr;</a>
+      <button class="ge-retry" onclick="startGuide()">&#8635; Retry demo</button>
     </div>
-    <a class="ge-cta" href="mailto:anupam.borah@vantagecircle.com?subject=Vantage%20Recognition%20walkthrough">Book a live walkthrough</a>
   </div>
 </div>
 
@@ -1358,11 +1358,25 @@ document.getElementById('recogOverlay').addEventListener('click',function(e){ if
 
 /* ===================== INTERACTIVE GUIDE (blur-focus) ===================== */
 var guide={on:false,i:0,timers:[]};
+var autoPlay=true, autoT=null, idleT=null, autoClicking=false;
+var STEP_MS=2000, RESULT_MS=5000, IDLE_MS=5000; // video pace: 2s per step, 5s on result pages, resume after 5s idle
 function nav(i){ return document.querySelectorAll('.sidebar .nav-item')[i]; }
 function rwTab(i){ return document.querySelectorAll('.rw-tab')[i]; }
 function gAfter(fn,ms){ var t=setTimeout(function(){ if(guide.on) fn(); }, ms); guide.timers.push(t); }
-function gClear(){ guide.timers.forEach(clearTimeout); guide.timers=[]; }
+function gClear(){ guide.timers.forEach(clearTimeout); guide.timers=[]; if(autoT){ clearTimeout(autoT); autoT=null; } }
 function topScroll(){ var s=document.querySelector('.scroll'); if(s) s.scrollTop=0; }
+function scheduleAuto(){
+  if(autoT){ clearTimeout(autoT); autoT=null; }
+  if(!autoPlay || !guide.on) return;
+  var s=GUIDE[guide.i]; if(!s) return;
+  var ms = s.auto ? RESULT_MS : STEP_MS; // result/reveal pages linger longer
+  autoT=setTimeout(function(){
+    if(!autoPlay || !guide.on) return;
+    var cur=GUIDE[guide.i];
+    if(cur && cur.click){ autoClicking=true; guideForward(); autoClicking=false; }
+    else { guideNext(); }
+  }, ms);
+}
 
 /*
   Each step:
@@ -1531,6 +1545,7 @@ function positionGuide(s){
 function guideTick(){ if(!guide.on) return; var s=GUIDE[guide.i]; if(s) positionGuide(s); requestAnimationFrame(guideTick); }
 function startGuide(){
   gClear(); guide.on=true; guide.i=0;
+  autoPlay=true; if(idleT){ clearTimeout(idleT); idleT=null; }
   document.getElementById('gEnd').classList.remove('show');
   ['dT','dB','dL','dR','gRing','gHand','gTip'].forEach(function(id){ var el=document.getElementById(id); if(el) el.style.display=''; });
   document.getElementById('gSkip').style.display='';
@@ -1545,12 +1560,13 @@ function showGuideStep(){
   document.getElementById('gH').innerHTML=s.h||'';
   document.getElementById('gS').innerHTML=s.s||'';
   var doEl=document.getElementById('gDo');
-  if(s.auto){ doEl.style.display='none'; gAfter(guideNext, s.auto); }
+  if(s.auto){ doEl.style.display='none'; }
   else { doEl.style.display='inline-flex'; doEl.textContent=s.do||'Tap the highlight'; }
   // prev/next arrows: disable prev on first step
   document.getElementById('gPrev').disabled = (guide.i===0);
   if(s.scroll){ var el=document.querySelector(s.spot); if(el) el.scrollIntoView({block:'center'}); }
   positionGuide(s);
+  scheduleAuto(); // video-mode: auto-advance this step (unless the user has taken over)
 }
 function guideNext(){ gClear(); if(guide.i<GUIDE.length-1){ guide.i++; showGuideStep(); } else { finishGuide(); } }
 /* forward arrow: perform this step's action (clicking fires the real onclick + the advance handler); reveal steps just advance */
@@ -1583,6 +1599,14 @@ document.addEventListener('click',function(e){
     if(s.after) s.after();
     gAfter(guideNext, s.delay||140);
   }
+},true);
+/* any REAL user click pauses the auto video; after 5s of no clicks it resumes */
+document.addEventListener('click',function(){
+  if(autoClicking || !guide.on) return; // ignore the demo's own auto-clicks
+  autoPlay=false;
+  if(autoT){ clearTimeout(autoT); autoT=null; }
+  if(idleT) clearTimeout(idleT);
+  idleT=setTimeout(function(){ if(guide.on){ autoPlay=true; scheduleAuto(); } }, IDLE_MS);
 },true);
 
 renderFeed(); renderGiftcards(); renderAmazon(); renderMerch(); renderExperiences(); renderMilestones(); renderLeaderboard(); setPoints(state.points);
