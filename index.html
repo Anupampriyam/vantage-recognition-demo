@@ -1359,7 +1359,7 @@ document.getElementById('recogOverlay').addEventListener('click',function(e){ if
 /* ===================== INTERACTIVE GUIDE (blur-focus) ===================== */
 var guide={on:false,i:0,timers:[]};
 var autoPlay=true, autoT=null, idleT=null, autoClicking=false;
-var STEP_MS=2000, RESULT_MS=5000, IDLE_MS=5000; // video pace: 2s per step, 5s on result pages, resume after 5s idle
+var STEP_MS=1000, RESULT_MS=3000, IDLE_MS=5000; // video pace: 1s per step, 3s on result pages, resume after 5s idle
 function nav(i){ return document.querySelectorAll('.sidebar .nav-item')[i]; }
 function rwTab(i){ return document.querySelectorAll('.rw-tab')[i]; }
 function gAfter(fn,ms){ var t=setTimeout(function(){ if(guide.on) fn(); }, ms); guide.timers.push(t); }
