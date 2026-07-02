@@ -1609,6 +1609,16 @@ function finishGuide(){
   document.getElementById('gEnd').classList.add('show');
   guide.on=false;
 }
+/* keep the tour on rails: swallow any click that isn't on the highlighted target
+   or the guide's own chrome, so wandering clicks don't navigate the app or close
+   the modal underneath and yank the spotlighted element away */
+document.addEventListener('click',function(e){
+  if(!guide.on) return;
+  if(e.target.closest('#gTip')||e.target.closest('#gSkip')||e.target.closest('#gEnd')) return; // guide chrome
+  var s=GUIDE[guide.i];
+  if(s && s.click && e.target.closest(s.click)) return; // the one element they're meant to click
+  e.stopPropagation(); e.preventDefault(); // everything else: block it from reaching the app
+},true);
 /* advance when the user clicks the highlighted target */
 document.addEventListener('click',function(e){
   if(!guide.on) return;
