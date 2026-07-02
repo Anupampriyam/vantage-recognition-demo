@@ -1420,7 +1420,7 @@ function scene(view){ closeRecognize(); switchView(view, nav({feed:0,rewards:2,m
 
 var GUIDE=[
   { setup:function(){ closeRecognize(); FEED=[]; renderFeed(); setPoints(4750); lbState='recog'; document.getElementById('myRankNum').textContent='47'; switchView('feed',nav(0)); topScroll(); },
-    spot:'.recognize-btn', click:'.recognize-btn', hold:5000,
+    spot:'.recognize-btn', click:'.recognize-btn', hold:3000,
     eye:'Recognize', h:'Recognize a teammate', s:'Great work should never go unseen. Tap Recognize, or watch it play.', do:'Tap Recognize' },
 
   { setup:sceneType, hole:'.modal', spot:'#ms-type .type-card', click:'#ms-type .type-card',
